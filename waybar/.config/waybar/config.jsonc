@@ -1,0 +1,171 @@
+
+// INCASE OF PROBLEMS
+// 'RESOURCE' FILES ARE IN /etc/xdg/waybar/
+// the dir is set to lower priority for fetching config files. This dir has higher priority.
+
+{
+  // Global bar settings
+  "margin-top": 5,
+  "margin-left": 4,
+  "margin-right": 4,
+  "layer": "bottom",
+  "position": "top",
+  "height": 43,
+  "spacing": 8,
+
+  // Modules position
+  "modules-left": [
+	  "hyprland/workspaces",
+	  "mpris"
+  ],
+
+  "modules-center": [
+	  "clock"
+  ],
+
+  "modules-right": [
+	  "custom/gpu",
+	  "pulseaudio",
+	  "network",
+	  "cpu",
+	  "memory",
+	  "battery",
+	  "tray"
+  ],
+
+  "custom/gpu": {
+	  "format": "{text} C°",
+	  "interval": 10,
+	  "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader",
+	  "tooltip-format": "Nvidia RTX 3050 Temperature",
+  },
+
+  // --------------------
+  // WORKSPACES (Hyprland)
+  // --------------------
+  "hyprland/workspaces": {
+	  "format": "{icon}",
+	  "all-outputs": true
+  },
+
+  // --------------------
+  // CLOCK
+  // --------------------
+  "clock": {
+	  "interval": 1,
+	  "format": "{:%I:%M %p}",
+	  "tooltip-format": "<big>{:%A, %d %B %Y}</big>\n<tt>{calendar}</tt>"
+  },
+
+  // --------------------
+  // AUDIO
+  // --------------------
+  "pulseaudio": {
+	  "format": "{icon}   {volume}%",
+	  "format-muted": "󰝟 Muted",
+	  "format-icons": {
+		  "default": ["", "", ""]
+	  },
+	  "scroll-step": 5
+  },
+
+  // --------------------
+  // NETWORK
+  // --------------------
+  "network": {
+	  "interval": 1,
+	  "format-wifi": "  {essid}",
+	  "format-ethernet": "󰈀  Wired",
+	  "format-disconnected": "󰖪  Disconnected",
+	  "tooltip-format-wifi": "{ifname}
+	  \nIP: {ipaddr}
+	  \nsignalStr: {signalStrength} %
+	  \nfrequency: {frequency} GHz
+	  \nupSpeed: {bandwidthUpBytes}
+	  \ndownSpeed: {bandwidthDownBytes}
+	  ",
+	  "tooltip-format-ethernet": "
+	  \nfrequency: {frequency} GHz
+	  \nupSpeed: {bandwidthUpBytes}
+	  \ndownSpeed: {bandwidthDownBytes}
+	  ",
+
+	//WARN: on click event is set to reconnect wifi
+	"on-click": "nmcli d connect wlan0"
+  },
+
+  // --------------------
+  // CPU
+  // --------------------
+  "cpu": {
+	  "interval": 2,
+	  "format": "  {usage}%",
+	  "tooltip": true
+  },
+
+  // --------------------
+  // MEMORY
+  // --------------------
+  "memory": {
+	  "interval": 5,
+	  "format": "  {used:0.1f} G"
+  },
+
+  // --------------------
+  // BATTERY
+  // --------------------
+  "battery": {
+	  "states": {
+		  "warning": 30,
+		  "twentyFive": 25,
+		  "twenty": 20,
+		  "fifteen": 15,
+		  "ten": 10,
+		  "five": 5
+	  },
+
+	  "events":{
+		  "on-discharging-warning": "notify-send -u normal 'Low Battery'",
+		  "on-discharging-twentyFive": "notify-send -u normal 'Low Battery'",
+		  "on-discharging-twenty": "notify-send -u normal 'Low Battery'",
+		  "on-discharging-fifteen": "notify-send -u critical 'Low Battery'",
+		  "on-discharging-ten": "notify-send -u critical 'Low Battery'",
+		  "on-discharging-five": "notify-send -u critical 'Low Battery'"
+	  },
+
+	  "format": "{icon} {capacity}%",
+	  "format-charging": "󰂄 {capacity}%",
+	  "format-icons": [
+		  "󰂎", "󰁺", "󰁻", "󰁼",
+		  "󰁽", "󰁾", "󰁿", "󰂀",
+		  "󰂁", "󰂂", "󰁹"
+	  ]
+  },
+
+  // --------------------
+  // SYSTEM TRAY
+  // --------------------
+  "tray": {
+	  "spacing": 8
+  },
+
+  // --------------------
+  // MPRIS (Playing Audio Name)
+  // --------------------
+  "mpris": {
+
+	  //WARN: on right click, current player stops. Only use when player conflicts
+	  "on-click-right": "playerctl stop",
+
+	  "format": "{status_icon}	{dynamic}",
+	  "dynamic-order": ["artist", "title"],
+	  "tooltip-format": "Current player: {player}",
+	  "status-icons": {
+		  "playing": "⏸",
+		  "paused": "▶"
+	  },
+	  "artist-len": 34,
+	  "title-len": 50
+  },
+
+}
