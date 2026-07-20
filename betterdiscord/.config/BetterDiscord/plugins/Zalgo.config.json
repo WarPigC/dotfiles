@@ -1,0 +1,13 @@
+{
+    "currentVersionInfo": {
+        "version": "0.5.1",
+        "hasShownChangelog": true
+    },
+    "settings": {
+        "corruptionAmount": 2.529450454102119,
+        "rampEnd": 0.7,
+        "corruptUp": false,
+        "corruptMid": true,
+        "corruptDown": false
+    }
+}

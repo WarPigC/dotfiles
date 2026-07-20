@@ -1,0 +1,20 @@
+{
+    "version": "1.13.14",
+    "addonlistControls": {
+        "plugin": {
+            "view": "grid"
+        },
+        "plugin-store": {
+            "sort": "likes",
+            "ascending": true
+        },
+        "theme-store": {
+            "sort": "modified"
+        }
+    },
+    "drawerStates": {
+        "settings": {
+            "developer": true
+        }
+    }
+}

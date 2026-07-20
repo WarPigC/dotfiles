@@ -1,0 +1,19 @@
+{
+    "ZeresPluginLibrary": false,
+    "BDFDB": true,
+    "BetterFormattingRedux": true,
+    "BetterVolume": true,
+    "DoNotTrack": true,
+    "ImageUtilities": true,
+    "InvisibleTyping": true,
+    "ServerCounter": true,
+    "SocialMediaLinkConverter": true,
+    "SpellCheck": true,
+    "SplitLargeMessages": true,
+    "SpotifyListenAlong": true,
+    "Translator": true,
+    "Zalgo": true,
+    "FavoriteMedia": true,
+    "LazyLoadChannels": true,
+    "SendStickersAsLinks": true
+}

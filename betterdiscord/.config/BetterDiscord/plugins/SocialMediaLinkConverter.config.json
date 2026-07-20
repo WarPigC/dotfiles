@@ -1,0 +1,99 @@
+{
+    "currentVersionInfo": {
+        "version": "0.1.5",
+        "hasShownChangelog": true
+    },
+    "settings": {
+        "platforms": {
+            "twitter": {
+                "enabled": true,
+                "host": "https://fxtwitter.com/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "tiktok": {
+                "enabled": true,
+                "host": "https://www.tiktokez.com/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "instagram": {
+                "enabled": false,
+                "host": "https://www.instagramez.com",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "bsky": {
+                "enabled": true,
+                "host": "https://bsyy.app/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "threads": {
+                "enabled": true,
+                "host": "https://www.vxthreads.net/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "reddit": {
+                "enabled": true,
+                "host": "custom",
+                "customTemplate": "https://www.vxreddit.com/r/{{subreddit}}/{{type}}/{{postId}}",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "pixiv": {
+                "enabled": true,
+                "host": "https://phixiv.net/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "deviantart": {
+                "enabled": true,
+                "host": "https://www.fxdeviantart.com/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "twitch": {
+                "enabled": true,
+                "host": "https://clips.fxtwitch.tv/",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "youtube": {
+                "enabled": false,
+                "host": "https://koutu.be",
+                "customTemplate": "",
+                "editPatchEnabled": false,
+                "customHost": ""
+            },
+            "tumblr": {
+                "enabled": true,
+                "host": "https://tpmblr.com",
+                "customTemplate": "",
+                "editPatchEnabled": false
+            },
+            "spotify": {
+                "enabled": true,
+                "host": "https://open.fxspotify.com",
+                "customTemplate": "",
+                "editPatchEnabled": false
+            },
+            "bilibili": {
+                "enabled": true,
+                "host": "https://fxbilibili.seria.moe",
+                "customTemplate": "",
+                "editPatchEnabled": false
+            }
+        }
+    },
+    "version": "0.1.6"
+}

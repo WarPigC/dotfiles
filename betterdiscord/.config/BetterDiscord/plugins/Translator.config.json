@@ -1,0 +1,52 @@
+{
+	"all": {
+		"choices": {
+			"received": {
+				"input": "auto",
+				"output": "$discord"
+			},
+			"sent": {
+				"input": "auto",
+				"output": "$discord"
+			}
+		},
+		"engines": {
+			"translator": "googleapi",
+			"backup": "----"
+		},
+		"exceptions": {
+			"wordStart": [
+				"!"
+			]
+		},
+		"general": {
+			"addQuickTranslateButton": true,
+			"addTranslateButton": true,
+			"sendOriginalMessage": false,
+			"showOriginalMessage": false,
+			"usePerChatTranslation": true,
+			"useSpoilerInOriginal": false
+		},
+		"prefixes": {
+			"translationPrefixData": [
+				{
+					"prefix": "$fr",
+					"language": "fr"
+				},
+				{
+					"prefix": "$de",
+					"language": "de"
+				},
+				{
+					"prefix": "$es",
+					"language": "es"
+				},
+				{
+					"prefix": "$jp",
+					"language": "ja"
+				}
+			]
+		},
+		"translationEnabledStates": []
+	}
+}
