@@ -19,9 +19,9 @@
 			"FlexProperties": false,
 			"FlowerStar": "166694",
 			"GifFavoriteButton": "680720",
-			"GuildChannelsWrapper": "153822",
+			"GuildChannelsWrapper": "541302",
 			"GuildFolder": "195451",
-			"GuildHeader": "765529",
+			"GuildHeader": "368193",
 			"GuildIcon": "155570",
 			"GuildItem": "441174",
 			"GuildsWrapper": "221305",
@@ -34,12 +34,13 @@
 			"Layers": "417863",
 			"Margins": "522826",
 			"Menu": "979383",
+			"Message": "364932",
 			"MessageAttachment": "388029",
 			"MessageElements": "184811",
 			"MessageReactions": "129821",
 			"MessageToolbarItems": "997248",
 			"MessagesPopoutTabBar": "668451",
-			"MessagesWrap": "408899",
+			"MessagesWrap": "859803",
 			"Modal": "156453",
 			"ModalCarouselNav": "189645",
 			"ModalNew": "617736",
@@ -70,11 +71,16 @@
 			"ChannelTextAreaEditor": "392553",
 			"DiscordTag": "297413",
 			"Embed": "175671",
-			"EmojiPickerListRow": "334295",
+			"EmojiPickerListRow": "267889",
 			"LazyImage": "619517",
 			"Menu": "980707",
+			"MessageAccessories": "500414",
+			"MessageButtons": "10822",
+			"MessageContent": "438729",
+			"MessageReply": "10822",
+			"Messages": "10822",
 			"Spoiler": "302031",
-			"UnreadDMs": "689035"
+			"UnreadDMs": "508404"
 		},
 		"changeLogs": {
 			"BDFDB": "4.5.4",
@@ -85,7 +91,7 @@
 			"ServerCounter": "1.1.1",
 			"SpellCheck": "1.7.3",
 			"SplitLargeMessages": "1.8.7",
-			"Translator": "2.8.2"
+			"Translator": "2.8.3"
 		},
 		"choices": {
 			"toastPosition": "right"
@@ -98,7 +104,7 @@
 			"useChromium": false
 		},
 		"hashes": {
-			"0BDFDB.data.json": "c1750298c43eb568e4607a3b3d78b7ddac5eea77",
+			"0BDFDB.data.json": "57d995f0a798d25301103823c8dd78cbaff23414",
 			"0BDFDB.raw.css": "09d4361abbf6390a119b6d7fd069912fb115d966"
 		}
 	}
