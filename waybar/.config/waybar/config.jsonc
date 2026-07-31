@@ -24,6 +24,7 @@
   ],
 
   "modules-right": [
+	  "custom/brightness",
 	  "custom/gpu",
 	  "pulseaudio",
 	  "network",
@@ -168,4 +169,12 @@
 	  "title-len": 50
   },
 
+
+	"custom/brightness" :{
+		"format": "☼ {text}",
+		"on-click": "brightnessctl -q set +5 ",
+		"on-click-right": "brightnessctl -q set 5-",
+		"exec": "brightnessctl get",
+		"interval": 1
+	}
 }
