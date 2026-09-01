@@ -10,10 +10,12 @@
     "SocialMediaLinkConverter": true,
     "SpellCheck": true,
     "SplitLargeMessages": true,
-    "SpotifyListenAlong": true,
+    "SpotifyListenAlong": false,
     "Translator": true,
-    "Zalgo": true,
+    "Zalgo": false,
     "FavoriteMedia": true,
     "LazyLoadChannels": true,
-    "SendStickersAsLinks": true
+    "SendStickersAsLinks": true,
+    "GifCaptioner": true,
+    "ChatButtonsBegone": true
 }

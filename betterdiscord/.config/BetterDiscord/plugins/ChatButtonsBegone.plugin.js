@@ -1,0 +1,2023 @@
+/**
+ * @name ChatButtonsBegone
+ * @author LancersBucket
+ * @description Remove annoying stuff from your Discord client.
+ * @version 4.5.3
+ * @authorId 355477882082033664
+ * @website https://github.com/LancersBucket/ChatButtonsBegone
+ * @source https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/main/ChatButtonsBegone.plugin.js
+ */
+
+class Styler {
+    constructor(api) {
+        this.api = api;
+        this.styles = [];
+        this.patches = [];
+    }
+
+    /**
+     * Queue a style for the ChatButtonsBegone stylesheet. The style will be added when the webpack is loaded.
+     * @param {string} selector CSS selector for the removal
+     * @param {...any} modules A list of modules in the form [webpack1, property1, webpack2, property2,...]
+     * @returns 
+     */
+    async add(selector, ...modules) {
+        let mods = [];
+        for (let i = 0; i < modules.length; i+=2) {
+            const result = await modules[i];
+            if (typeof result[modules[i+1]] !== 'string') {
+                this.api.UI.showToast('ChatButtonsBegone detected an invalid webpack. Check the console for more information.', { type: 'warning', timeout: '5000' });
+                this.api.Logger.warn(
+                    `Invalid webpack detected. This may impact functionality of a setting you have enabled. ` + 
+                    `Please report the following warning to ${config.info.github}/issues:` + 
+                    `\n\nSelector "${selector}" contains an invalid webpack for module ${i} (.${modules[i+1]})`
+                );
+                return;
+            }
+            mods.push(result[modules[i+1]].trim().replace(' ', '.'));
+        }
+        this.styles.push(this.format(selector, ...mods));
+        this.clear();
+        this.apply();
+    }
+
+    /**
+     * Queue a patch for the ChatButtonsBegone stylesheet. The style will be added when the webpack is loaded.
+     * @param {string} cssPatch CSS changes
+     * @param {string} selector CSS selector for the removal
+     * @param {...any} modules A list of modules in the form [webpack1, property1, webpack2, property2,...]
+     */
+    async patch(cssPatch, selector, ...modules) {
+        let mods = [];
+        for (let i = 0; i < modules.length; i+=2) {
+            const result = await modules[i];
+            mods.push(result[modules[i+1]].trim().replace(' ', '.'));
+        }
+        this.patches.push([this.format(selector, ...mods), cssPatch]);
+        this.clear();
+        this.apply();
+    }
+
+    /**
+     * Format a selector containing {n} tags and map them to to a provided list of modules.
+     * @param {string} str A string containing {n} tags
+     * @param {...any} args A list of modules in the form [webpack1, property1, webpack2, property2,...] 
+     * @returns {string} The formatted string
+     */
+    format(str, ...args) {
+        return str.replace(/{(\d+)}/g, (match, number) => {
+            return typeof args[number] !== 'undefined' ? args[number] : match;
+        });
+    }
+
+    /**
+     * Apply the styles and patches.
+     */
+    apply() {
+        if (this.styles.length > 0) this.api.DOM.addStyle('ChatButtonsBegone-styles', `${this.styles.join(', ')} { display: none !important; }`);
+        if (this.patches.length > 0) this.api.DOM.addStyle('ChatButtonsBegone-patches', this.patches.map(p => `${p[0]} { ${p[1]} }`).join(' '));
+    }
+
+    /**
+     * Remove the styles and patches, and clear the buffers.
+     */
+    purge() {
+        this.api.DOM.removeStyle('ChatButtonsBegone-styles');
+        this.styles = [];
+
+        this.api.DOM.removeStyle('ChatButtonsBegone-patches');
+        this.patches = [];
+    }
+
+    /**
+     * Remove the styles and patches, without clearing the buffers.
+     */
+    clear() {
+        this.api.DOM.removeStyle('ChatButtonsBegone-styles');
+        this.api.DOM.removeStyle('ChatButtonsBegone-patches');
+    }
+}
+
+const config = {
+    info: {
+        github: 'https://github.com/LancersBucket/ChatButtonsBegone',
+        version: '4.5.3',
+    },
+    defaultConfig: [
+        {
+            type: 'category',
+            name: 'Chat Bar',
+            id: 'chatbar',
+            collapsible: true,
+            shown: true,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'attachButton',
+                    name: 'Remove Attach Button',
+                    note: 'Removes the Attach button from the chatbar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'giftButton',
+                    name: 'Remove Gift/Boost Button',
+                    note: 'Removes the Gift Nitro/Boost Server button from the chatbar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'gifButton',
+                    name: 'Remove GIF Button',
+                    note: 'Removes the GIF button from the chatbar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'stickerButton',
+                    name: 'Remove Sticker Button',
+                    note: 'Removes the Sticker button from the chatbar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'emojiButton',
+                    name: 'Remove Emoji Button',
+                    note: 'Removes the Emoji button from the chatbar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'appLauncherButton',
+                    name: 'Remove App Launcher Button',
+                    note: 'Removes the App Launcher button from the chatbar.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Message Actions',
+            id: 'messageActions',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'quickReactions',
+                    name: 'Remove Quick Reactions',
+                    note: 'Removes the quick reactions from the message actions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'reactionButton',
+                    name: 'Remove Reaction Button',
+                    note: 'Removes the "Add Reaction" button from the message actions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'editButton',
+                    name: 'Remove Edit Button',
+                    note: 'Removes the "Edit" button from the message actions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'replyButton',
+                    name: 'Remove Reply Button',
+                    note: 'Removes the "Reply" button from the message actions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'forwardButton',
+                    name: 'Remove Forward Button',
+                    note: 'Removes the "Forward" button from the message actions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'addReactionButton',
+                    name: 'Remove "Add Reaction" Button On Messages',
+                    note: 'Removes the "Add Reaction" button that appears next to messages that already has reactions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'removeMore',
+                    name: 'Remove "More" Button',
+                    note: 'Removes the "More" (three dots) button from the message actions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'removeBookmarkMessage',
+                    name: 'Remove "Bookmark Message" Button',
+                    note: 'Removes the "Bookmark Message" button from the message context menu.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'removeCreateReminder',
+                    name: 'Remove "Create Reminder" Button',
+                    note: 'Removes the "Create Reminder" button from the message context menu.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'removeAppsContext',
+                    name: 'Remove "Apps" Button',
+                    note: 'Removes the "Apps" button from the message context menu.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'removeSpeakMessage',
+                    name: 'Remove "Speak Message" Button',
+                    note: 'Removes the "Speak Message" button from the message context menu.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Friends and Direct Messages',
+            id: 'dms',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'quickSwitcher',
+                    name: 'Remove Quick Switcher',
+                    note: 'Removes the quick switcher ("Find or start a conversation") from the DM list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'friendsTab',
+                    name: 'Remove Friends Tab',
+                    note: 'Removes the friends tab from the DM list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'premiumTab',
+                    name: 'Remove Nitro Tab',
+                    note: 'Removes the Nitro tab from the DM list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'discordShopTab',
+                    name: 'Remove Shop Tab',
+                    note: 'Removes the Shop tab from the DM list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'DMHeader',
+                    name: 'DM Header',
+                    note: 'Controls the visibility of the DM header. "Show" shows the header, "Remove Button" removes the \'Create DM\' button, "Remove Text" removes the header text, "Remove" removes the entire header.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove Button', value: 'hideButton' },
+                        { label: 'Remove Text', value: 'hideText' },
+                        { label: 'Remove', value: 'remove' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
+                    id: 'activeNow',
+                    name: 'Active Now Section',
+                    note: 'Controls the visibility of the "Active Now" section in the Friends tab. "Remove" removes the section, "Simplify" removes Twitch and Rich Presence blocks.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Simplify', value: 'simplify' },
+                        { label: 'Remove When Empty', value: 'empty' },
+                        { label: 'Simplify + Remove When Empty', value: 'simplifyempty' },
+                        { label: 'Remove', value: 'remove' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
+                    id: 'userStatus',
+                    name: 'Custom User Status',
+                    note: 'Controls the visibility of custom User Status in DM and Server Member List. "Show" shows them, "Remove" removes them entirely.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show'},
+                        { label: 'Remove in DM list', value: 'dmlist' },
+                        { label: 'Remove in Server Member list', value: 'memberlist' },
+                        { label: 'Remove', value: 'remove' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
+                    id: 'userActivity',
+                    name: 'User Activity Status',
+                    note: 'Controls the visibility of User Activity Status in DM and Server Member List. "Show" shows them, "Remove" removes them entirely.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show'},
+                        { label: 'Remove in DM list', value: 'dmlist' },
+                        { label: 'Remove in Server Member list', value: 'memberlist' },
+                        { label: 'Remove', value: 'remove' },
+                    ],
+                },
+                {
+                    type: 'switch',
+                    id: 'defaultFLStatus',
+                    name: 'Remove Friends Tab Default Status',
+                    note: 'Removes the Default Online Status sub-text from Friends.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'customFLStatus',
+                    name: 'Remove Friends Tab Custom Status',
+                    note: 'Removes the Custom Status sub-text from Friends.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'defaultFLActivity',
+                    name: 'Remove Friends Tab Activity Sub-Status',
+                    note: 'Removes the Activity sub-text from Friends.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'libraryTab',
+                    name: 'Remove Library Tab',
+                    note: 'Removes the Library tab from the DM list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'pinDM',
+                    name: 'Remove "Pin" Option From DM Context Menu',
+                    note: 'Removes the "Pin" option from the DM context menu.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'groupDM',
+                    name: 'Remove "Invite to Group DM" Button',
+                    note: 'Removes the "Invite to Group DM" Button from existing Group DM MemberList area.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Servers and Channels',
+            id: 'servers',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'addServerButton',
+                    name: 'Remove "Add a Server" Button',
+                    note: 'Removes the "Add a Server" button from the server list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'discoverButton',
+                    name: 'Remove Discover Button',
+                    note: 'Removes the "Discover" button from the server list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'unreadIndicator',
+                    name: 'Unread Mentions Indicator',
+                    note: 'Controls the visibility of the Unread Mentions Indicators. "Remove Top" removes the Top Indicator, "Remove Bottom" removes the Bottom Indicator, "Remove Both" removes both Top and Bottom Indicators.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove Top', value: 'top' },
+                        { label: 'Remove Bottom', value: 'bottom' },
+                        { label: 'Remove Both', value: 'both' },
+                    ],
+                },
+                {
+                    type: 'switch',
+                    id: 'serverBanner',
+                    name: 'Remove Server Banner',
+                    note: 'Removes the Server Banner Image/Container from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'boostBar',
+                    name: 'Remove Boost Bar',
+                    note: 'Removes the boost progress bar from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'stageNotice',
+                    name: 'Remove "Live Now" Notice',
+                    note: 'Removes the "Live Now" Notice from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'serverGuide',
+                    name: 'Remove Server Guide',
+                    note: 'Removes the Server Guide button from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'eventButton',
+                    name: 'Remove Event Button',
+                    note: 'Removes the Event button from the channel list. Note: Does not remove any events that are "Happening Now."',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'membersButton',
+                    name: 'Remove Members Button',
+                    note: 'Removes the Members button from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'channelsAndRoles',
+                    name: 'Remove Channels / Roles Button',
+                    note: 'Removes the Channels / Roles button from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'boostsButton',
+                    name: 'Remove Server Boosts Button',
+                    note: 'Removes the Server Boosts button from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'shopButton',
+                    name: 'Remove Shop Button',
+                    note: 'Removes the Server Shop button from the channel list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'inviteButton',
+                    name: 'Remove Invite Button',
+                    note: 'Removes the invite button when hovering over channel list entries.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'showallButton',
+                    name: 'Remove "Show All" Button',
+                    note: 'Removes the VC "Show All" button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'settingsButton',
+                    name: 'Remove Settings Button',
+                    note: 'Removes the settings button when hovering over channel list entries.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'pinChannel',
+                    name: 'Remove "Pin" Option From Channel Context Menu',
+                    note: 'Removes the "Pin Channel to Top" option from the channel context menu.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'unreadMentionsBar',
+                    name: 'Remove "Unread Mentions" Notification',
+                    note: 'Removes the per-Server/Channel List "Unread Mentions" Notification.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'unreadMessagesBar',
+                    name: 'Remove "Unread Messages" Notification',
+                    note: 'Removes the per-Server/Channel List "Unread Messages" Notification.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'activitySection',
+                    name: 'Remove Activities Section',
+                    note: 'Removes the Activities section from the server member list.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Voice',
+            id: 'voice',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'invitePlaceholder',
+                    name: 'Remove Solo Invite Panel',
+                    note: 'Removes the Invite/Activites Panel when only user in Voice.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'cameraPanelButton',
+                    name: 'Remove Camera Panel Button',
+                    note: 'Removes the camera button from the voice chat panel in the bottom left.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'screensharePanelButton',
+                    name: 'Remove Screenshare Panel Button',
+                    note: 'Removes the screenshare button from the voice chat panel in the bottom left.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'activityPanelButton',
+                    name: 'Remove Activity Panel Button',
+                    note: 'Removes the activity button from the voice chat panel in the bottom left.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'soundboardPanelButton',
+                    name: 'Remove Soundboard Panel Button',
+                    note: 'Removes the soundboard button from the voice chat panel in the bottom left.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'krispButton',
+                    name: 'Remove Noise Suppression (Krisp) Button',
+                    note: 'Removes the noise supression button from the user voice chat panel.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'gameActivityPanel',
+                    name: 'Remove Game Activity Panel',
+                    note: 'Removes the current game activity panel from the user voice chat panel.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'gameActivityButton',
+                    name: 'Remove Game Activity Button',
+                    note: 'Removes the suggested activities button from bottom voice chat panel.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'soundboardButton',
+                    name: 'Remove Soundboard Button',
+                    note: 'Removes the Soundboard Button from the bottom voice chat panel.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'voiceAvatars',
+                    name: 'Remove Server Voice Chat Avatars',
+                    note: 'Removes the avatars of users in voice chats in servers.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'voiceWasHere',
+                    name: 'Remove Was Here From VC List',
+                    note: 'Removes the Was Here/What You Missed in VC list.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'voiceInviteToVoice',
+                    name: 'Remove Invite To Voice From VC List',
+                    note: 'Removes the Invite to Voice button that temporarily appears when joining a VC.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'voiceSetCustomStatus',
+                    name: 'Remove Custom Status Subtitle From VC List',
+                    note: 'Removes the Set Custom Status and Custom Status Subtitles from VC.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'vcRTCpingWrap',
+                    name: 'Remove Ping/Connection Status',
+                    note: 'Removes the Ping and/or Connection Status indicators from Avatar Wrapper in VCs.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove Ping Button', value: 'rtcPing' },
+                        { label: 'Remove Status Label', value: 'rtcStatus' },
+                        { label: 'Remove Both', value: 'rtcPingStatus' },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Title and Toolbar',
+            id: 'toolbar',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'navButtons',
+                    name: 'Remove Navigation Buttons',
+                    note: 'Removes the forward/back navigation buttons from the top left of the title bar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'locator',
+                    name: 'Remove Title Bar Text',
+                    note: 'Removes the "locator" text in the title bar that shows the current server/DM (also removes the image).',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'bookmarkButton',
+                    name: 'Remove Bookmarks Button',
+                    note: 'Removes the Bookmarks button (added by experiment 2026-03-message-bookmarks variant 2)',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'inboxButton',
+                    name: 'Remove Inbox Button',
+                    note: 'Removes the Inbox button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'helpButton',
+                    name: 'Remove Help Button',
+                    note: 'Removes the Help button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'threadsButton',
+                    name: 'Remove Threads Button',
+                    note: 'Removes Threads button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'notifyButton',
+                    name: 'Remove Notify Button',
+                    note: 'Removes Notification Bell button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'pinnedButton',
+                    name: 'Remove Pins Button',
+                    note: 'Removes Pinned Messages button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'memberButton',
+                    name: 'Remove Show/Hide Members Button',
+                    note: 'Removes Show/Hide Members button. Also affects the DMs "Add to DM"',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'voiceButton',
+                    name: 'Remove Voice Call Button',
+                    note: 'Removes Start Voice Call button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'videoButton',
+                    name: 'Remove Video Call Button',
+                    note: 'Removes Start Video Call button.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'profileButton',
+                    name: 'Remove Show/Hide Profile Button',
+                    note: 'Removes Show/Hide User Profile from DMs button.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Profile Customizations',
+            id: 'profileCustomizations',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'profileNoCustom',
+                    name: 'Disable Profile Custom Theme',
+                    note: 'Disables all Custom Theme elements from a Proflie (Popup, Full, and Sideber (DMs))',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'profileDisableAll',
+                    name: 'Disable All Profile Customizations',
+                    note: 'Disables (Global) All following "(+)" Profile Customizations: Nameplates, ClanTag, Avatar/Frame Decorations, Badges, Banners, Profile Effects As well as Removes Collections, Activities, Stats, Wishlist, Custom Status',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'namePlate',
+                    name: 'Remove Nameplates (+)',
+                    note: 'Removes nameplates from members in the member list.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in DMs/Members', value: 'original' },
+                        { label: 'Remove in User Area', value: 'self' },
+                        { label: 'Remove', value: 'global' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
+                    id: 'clanTag',
+                    name: 'Clan Tag (+)',
+                    note: 'Controls the visibility of the Clan Tags. "Remove in Member List" removes it in member lists (Server/DM and messages), "Remove in Profile" removes it in profiles, "Remove" removes it everywhere.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Member List', value: 'memberlist' },
+                        { label: 'Remove in Profile', value: 'profile' },
+                        { label: 'Remove', value: 'global' },
+                    ],
+                },
+                {
+                    type: 'switch',
+                    id: 'avatarDecoration',
+                    name: 'Remove Avatar Decoration (+)',
+                    note: 'Controls the visibility of avatar decorations.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'hideBadges',
+                    name: 'Remove Profile Badges (+)',
+                    note: 'Removes the badges from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'hideBanner',
+                    name: 'Remove Profile Banner (+)',
+                    note: 'Removes the banner image from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'removeCutout',
+                    name: 'Remove Profile Cutout',
+                    note: 'Removes the Avatar cutout in the banner image/background from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'profileEffects',
+                    name: 'Remove Profile Effects (+)',
+                    note: 'Removes profile effects (Animated Overlays) from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'profileGIF',
+                    name: 'Remove "GIF" From Profile Banner',
+                    note: 'Removes the "GIF" tag from user profiles that have an animated banner.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'hideMessage',
+                    name: 'Remove Message Input',
+                    note: 'Removes the Send Message input area from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'hideEditProfile',
+                    name: 'Remove Edit Profile',
+                    note: 'Removes Edit Profile from Self Profile popup.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'hideCollection',
+                    name: 'Remove Profile Collection (+)',
+                    note: 'Removes the Game Collection from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'hideProfileActivity',
+                    name: 'Profile Activity Card (+)',
+                    note: 'Removes the Activity card from user profiles.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Popout Profile', value: 'hpaPopout' },
+                        { label: 'Remove in DMs View Profile', value: 'hpaDMs' },
+                        { label: 'Remove', value: 'hpaGlobal' },
+                    ],
+                },
+                {
+                    type: 'dropdown',
+                    id: 'hideProfileStats',
+                    name: 'Profile Stats Card (+)',
+                    note: 'Removes the Stats card from user profiles.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Popout Profile', value: 'hpsPopout' },
+                        { label: 'Remove in DMs View Profile', value: 'hpsDMs' },
+                        { label: 'Remove', value: 'hpsGlobal' },
+                    ],
+                },
+                {
+                    type: 'switch',
+                    id: 'hideWishlist',
+                    name: 'Remove Profile Wishlist (+)',
+                    note: 'Removes the Wishlist from user profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'hideStatus',
+                    name: 'Profile Custom Status (+)',
+                    note: 'Removes the Custom Status from user profiles.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Popout Profile', value: 'hcsPopout' },
+                        { label: 'Remove in DMs View Profile', value: 'hcsDMs' },
+                        { label: 'Remove', value: 'hcsGlobal' },
+                    ],
+                },
+                {
+                    type: 'switch',
+                    id: 'frameDecoration',
+                    name: 'Remove Profile Frame Decoration (+)',
+                    note: 'Removes the Frame Decoration from Profiles.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'hideClips',
+                    name: 'Remove "Clips" from Status Menu',
+                    note: 'Removes the "Clips" option from Profile Status menu.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Miscellaneous',
+            id: 'miscellaneous',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'blockedMessage',
+                    name: 'Remove Blocked Messages Indicator',
+                    note: 'Removes the "blocked message(s)" insert in Chat',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'nitroUpsell',
+                    name: 'Remove Nitro Advertising',
+                    note: 'Removes Nitro advertising thoughout various parts of Discord. Note: May not remove all of them.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'noQuests',
+                    name: 'Remove Quests',
+                    note: 'Removes Quest related popups and interactions.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'noActvityMenu',
+                    name: 'Remove Activity Context Section',
+                    note: 'Removes Activity related entries from Settings context Menu.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'placeholderText',
+                    name: 'Remove Placeholder Text In Message Area',
+                    note: 'Removes the placeholder text "Message ..." in the chat bar.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'avatarPopover',
+                    name: 'Remove Status Reply/React Popover',
+                    note: 'Removes the buttons when you hover over a user\'s status.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'listSeparator',
+                    name: 'Remove DM/Server Channel List Separator',
+                    note: 'Controls the visibility of the separator line between the DM and server channel lists. "Show" shows the separator, "Semi-Smart Remove" attempts to remove it depending on your chosen settings in DMs and Servers, "Remove" removes it entirely.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show'},
+                        { label: 'Remove in DM list', value: 'dmlist' },
+                        { label: 'Remove in Server Channel list', value: 'serverlist' },
+                        { label: 'Semi-Smart Remove', value: 'smart' },
+                        { label: 'Remove', value: 'remove' },
+                    ],
+                },
+                {
+                    type: 'switch',
+                    id: 'seasonalEvents',
+                    name: 'Remove Seasonal Events',
+                    note: 'Removes seasonal event tabs and buttons (i.e. Snowsgiving, Discord\'s Birthday, etc.).',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'ioChevrons',
+                    name: 'Remove I/O Chevrons',
+                    note: 'Removes the chevrons (arrows) from the I/O buttons in the user panel.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'baseGradient',
+                    name: 'Remove Chat/Typing Now Gradient',
+                    note: 'Removes the gradient from the Chat Input/Now Typing area.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'noTypingDots',
+                    name: 'Remove Chat/Typing Now animated "Dots"',
+                    note: 'Removes the animated Dots from the Now Typing area.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'dropdown',
+                    id: 'tagsBotApp',
+                    name: 'Remove APP/BOT Tags',
+                    note: 'Removes the APP/Bot Tags from Bots in Memberslist/Messages.',
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show'},
+                        { label: 'Keep Topic OP Tag', value: 'keepOP' },
+                        { label: 'Remove Only In Chats', value: 'chatOnly' },
+                        { label: 'Remove', value: 'remove' },
+                    ]
+                },
+                {
+                    type: 'switch',
+                    id: 'badgeNewUser',
+                    name: 'Remove New User Badge',
+                    note: 'Removes the New User badge from chat usernames area.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'threadSuggestions',
+                    name: 'Remove "Create Thread" Suggestion',
+                    note: 'Removes the "Create Thread" suggestion that appears when having a chain of 3 replies.',
+                    defaultValue: false,
+                },
+            ],
+        },
+        {
+            type: 'category',
+            name: 'Compatibility',
+            id: 'compatibility',
+            collapsible: true,
+            shown: false,
+            settings: [
+                {
+                    type: 'switch',
+                    id: 'invisibleTypingButton',
+                    name: 'Remove Invisible Typing Button',
+                    note: 'Removes the button added by Strencher\'s InvisibleTyping plugin from the chat.',
+                    defaultValue: false,
+                },
+                {
+                    type: 'switch',
+                    id: 'newOldProfiles',
+                    name: 'NewOldProfiles Compatibility',
+                    note: 'Enables compatibility with KingGamingYT\'s NewOldProfiles plugin. Modifies Clan Tag and Badges toggles to support NewOldProfiles.',
+                    defaultValue: false,
+                },
+            ],
+        },
+    ],
+};
+
+module.exports = class ChatButtonsBegone {
+    constructor(meta) {
+        this.api = new BdApi(meta.name);
+        this.styler = new Styler(this.api);
+        this.settings = this.api.Data.load('settings') || {};
+
+        this.settingVersion = this.api.Data.load('settingVersion') || '0.0.0';
+
+        this.ensureDefaultSettings();
+        this.migrateConfig();
+    }
+
+    migrateConfig() {
+        const migrations = [
+            {
+                to: '4.1.0',
+                migrate: (config) => {
+                    // Migrate user status to DM settings
+                    config.dms.userStatus = config.miscellaneous.userStatus;
+                    delete config.miscellaneous.userStatus;
+
+                    // Migrate user activity to DM settings
+                    config.dms.userActivity = config.miscellaneous.userActivity;
+                    delete config.miscellaneous.userActivity;
+
+                    // Convert tagsBotApp to dropdown
+                    config.miscellaneous.tagsBotApp = config.miscellaneous.tagsBotApp ? 'show' : 'remove';
+
+                    return config;
+                },
+            },
+            {
+                to: '4.5.0',
+                migrate: (config) => {
+                    // Convert hideStatus to a dropdown
+                    config.profileCustomizations.hideStatus = config.profileCustomizations.hideStatus ? 'show' : 'hcsGlobal';
+
+                    return config;
+                }
+            },
+            {
+                to: '4.5.2',
+                migrate: (config) => {
+                    // Correct migrations by disabling both settings
+                    config.profileCustomizations.hideStatus = 'show';
+                    config.miscellaneous.tagsBotApp = 'show';
+
+                    return config;
+
+                }
+            },
+        ];
+
+        const compareVersions = (a, b) => {
+            const aParts = a.split('.').map(Number);
+            const bParts = b.split('.').map(Number);
+
+            for (let i = 0; i < Math.min(aParts.length, bParts.length); i++) {
+                if (aParts[i] > bParts[i]) return 1;
+                if (aParts[i] < bParts[i]) return -1;
+            }
+            
+            if (aParts.length !== bParts.length) {
+                if (aParts.length > bParts.length) return 1;
+                if (aParts.length < bParts.length) return -1;
+            }
+            
+            return 0;
+        }
+
+        let currentVersion = this.settingVersion;
+        let migrated = false;
+        migrations.forEach((migration) => {
+            if (compareVersions(currentVersion, migration.to) < 0) {
+                this.settings = migration.migrate(this.settings);
+                currentVersion = migration.to;
+                migrated = true;
+            }
+        });
+        if (migrated) this.api.Data.save('settings', this.settings);
+
+        if (compareVersions(this.settingVersion, config.info.version) <= 0) {
+            this.settingVersion = config.info.version;
+            this.api.Data.save('settingVersion', this.settingVersion);
+        }
+    }
+
+    ensureDefaultSettings() {
+        const oldConfig = JSON.stringify(this.settings);
+        for (let category of config.defaultConfig) {
+            if (category.type === 'category') {
+                if (!(category.id in this.settings)) this.settings[category.id] = {};
+
+                for (let setting of category.settings) {
+                    if (!(setting.id in this.settings[category.id]) || this.settings[category.id][setting.id] == null) {
+                        this.settings[category.id][setting.id] = setting.defaultValue;
+                    }
+                }
+            } else {
+                if (!(category.id in this.settings)) this.settings[category.id] = category.value;
+            }
+        }
+
+        if (oldConfig !== JSON.stringify(this.settings)) {
+            this.api.Data.save('settings', this.settings);
+        }
+    }
+
+    async addStyles() {
+        const newOldProfiles = this.settings.compatibility.newOldProfiles;
+
+        /// Chat Buttons ///
+        if (this.settings.chatbar.attachButton) this.styler.add('.{0}', this.attachButton, 'attachWrapper');
+        if (this.settings.chatbar.giftButton) {
+            // Current Implementation
+            this.styler.add('.{0} div[class^="container"]:has(> .{1})', this.chatBarButtons, 'buttons', this.chatBarButtons, 'button');
+            // Quick DM
+            this.styler.add('.{0} div:has(> button svg > path[d^="M4 6a4 4 0 0 1 4-4h.09c1.8 0 3.39 1.18 3.91"])', this.textArea, 'channelTextArea');
+        }
+        if (this.settings.chatbar.gifButton) {
+            // Chatbar
+            this.styler.add('.expression-picker-chat-input-button:not(:has(.{0}, .{1}))', this.chatBarButtons, 'stickerButton', this.emojiButton, 'emojiButton');
+            // Quick DM
+            this.styler.add('.{0} div:has(> button svg path[d^=" M-7,-10 C-8.656999588012695,-10"])', this.textArea, 'channelTextArea');
+        }
+        if (this.settings.chatbar.stickerButton) this.styler.add('.expression-picker-chat-input-button:has(.{0})', this.chatBarButtons, 'stickerButton');
+        if (this.settings.chatbar.emojiButton) this.styler.add('.expression-picker-chat-input-button:has(.{0})', this.emojiButton, 'emojiButton');
+        if (this.settings.chatbar.appLauncherButton) this.styler.add('.app-launcher-entrypoint');
+
+        /// Message Actions ///
+        if (
+            this.settings.messageActions.quickReactions &&
+            this.settings.messageActions.reactionButton &&
+            this.settings.messageActions.editButton &&
+            this.settings.messageActions.replyButton &&
+            this.settings.messageActions.forwardButton &&
+            this.settings.messageActions.removeMore
+        ) {
+            this.styler.add('.{0} .{1}', this.messageActionContainer, 'message', this.messageActionContainer, 'buttons');
+        }
+        if (this.settings.messageActions.quickReactions) {
+            this.styler.add('.{0}:has(> .{1} > [data-type="emoji"])', this.messageActionButtons, 'hoverBarButton', this.messageActionButtons, 'icon');
+            this.styler.add('.{0}', this.messageActionButtons, 'separator');
+        }
+        if (this.settings.messageActions.reactionButton) this.styler.add('.{0}:has(svg > path[d^="M12 23a11 11 0 1 0 0-22 11 11 0 0 0 0 22ZM6.5"])', this.messageActionButtons, 'hoverBarButton');
+        if (this.settings.messageActions.editButton) this.styler.add('.{0}:has(svg > path[d^="m13.96 5.46 4.58 4.58a1 1 0 0 0 1.42 0l1.38-1.38a2"])', this.messageActionButtons, 'hoverBarButton');
+        if (this.settings.messageActions.replyButton) this.styler.add('.{0}:has(svg > path[d^="M2.3 7.3a1 1 0 0 0 0 1.4l5 5a1 1 0 0 0 1.4-1.4L5.42"])', this.messageActionButtons, 'hoverBarButton');
+        if (this.settings.messageActions.forwardButton) this.styler.add('.{0}:has(svg > path[d^="M21.7 7.3a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-1.4-1.4L18.58"])', this.messageActionButtons, 'hoverBarButton');
+        if (this.settings.messageActions.removeMore) this.styler.add('.{0}:has(svg > path[d^="M4 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10-2a2"])', this.messageActionButtons, 'hoverBarButton');
+
+        if (this.settings.messageActions.addReactionButton) {
+            this.styler.add('div[id^="message-accessories"] > div[class^="reactions"] > span:has(div[class^="reactionBtn"])');
+            this.styler.add('ol[data-list-id="chat-messages"] div[class^="reactButtons"] > span:has(div[class^="reactionBtn"])');
+        }
+
+        // Context Menu Actions
+        if (this.settings.messageActions.removeBookmarkMessage) this.styler.add('div[role="menuitem"][id="message-bookmark"]');
+        if (this.settings.messageActions.removeCreateReminder) this.styler.add('div[role="menuitem"][id="message-reminder"]');
+        if (this.settings.messageActions.removeAppsContext) this.styler.add('div:has(> div[role="menuitem"][id="message-apps"])');
+        if (this.settings.messageActions.removeSpeakMessage) this.styler.add('div[role="menuitem"][id="message-tts"]');
+
+        /// Direct Messages ///
+        if (this.settings.dms.quickSwitcher) this.styler.add('.{0} [class^="searchBar"]', this.DMList, 'privateChannels');
+        if (this.settings.dms.friendsTab) this.styler.add('li:has([href="/channels/@me"])');
+        if (this.settings.dms.premiumTab) this.styler.add('li:has([href="/store"])');
+        if (this.settings.dms.discordShopTab) this.styler.add('li:has([href="/shop"])');
+        if (this.settings.dms.groupDM) this.styler.add('.{0}', this.groupDM, 'inviteToGroupButton');
+
+        if (this.settings.dms.DMHeader == 'hideButton') {
+            this.styler.add('.{0}', this.DMHeader, 'privateChannelRecipientsInviteButtonIconContainer');
+        } else if (this.settings.dms.DMHeader == 'hideText') {
+            this.styler.add('.{0}', this.DMHeader, 'headerText');
+        } else if (this.settings.dms.DMHeader == 'remove') {
+            this.styler.add('.{0}', this.DMHeader, 'privateChannelsHeaderContainer');
+        }
+
+        if (this.settings.dms.activeNow == 'simplify') { 
+            this.styler.add('.{0}:has(.{1})', this.activeNowCards, 'body', this.activeNowCards, 'twitchSectionPreview');
+            this.styler.add('.{0}:has(.{1})', this.activeNowCards, 'body', this.activeNowCards, 'activitySection');
+            this.styler.add('.{0}:has(.{1})', this.activeNowCards, 'body', this.activeNowCards, 'gameSection');
+        } else if (this.settings.dms.activeNow == 'empty') {
+            this.styler.add('.{0}:has(.{1})', this.activeNowColumn, 'nowPlayingColumn', this.activeNowEmpty, 'emptyCard');
+        } else if (this.settings.dms.activeNow == 'simplifyempty') {
+            this.styler.add('.{0}:has(.{1})', this.activeNowCards, 'body', this.activeNowCards, 'twitchSectionPreview');
+            this.styler.add('.{0}:has(.{1})', this.activeNowCards, 'body', this.activeNowCards, 'activitySection');
+            this.styler.add('.{0}:has(.{1})', this.activeNowCards, 'body', this.activeNowCards, 'gameSection');
+            this.styler.add('.{0}:has(.{1})', this.activeNowColumn, 'nowPlayingColumn', this.activeNowEmpty, 'emptyCard');
+        } else if (this.settings.dms.activeNow == 'remove') {
+            this.styler.add('.{0}', this.activeNowColumn, 'nowPlayingColumn');
+        }
+
+        // Remove Custom User Status
+        if (this.settings.dms.userStatus == 'dmlist') {
+            this.styler.add('div[class^="subText"]:has(> .{0} > .{1})', this.dmStatus, 'textXs', this.dmlistStatus, 'activityStatusText');
+        } else if (this.settings.dms.userStatus == 'memberlist') {
+            this.styler.add('.{0}:has(> .{1} > .{2})', this.memberlistStatus, 'subText', this.dmStatus, 'textXs', this.memberStatusText, 'truncated');
+        } else if (this.settings.dms.userStatus == 'remove') {
+            // DM List
+            this.styler.add('div[class^="subText"]:has(> .{0} > .{1})', this.dmStatus, 'textXs', this.dmlistStatus, 'activityStatusText');
+            // Member List
+            this.styler.add('.{0}:has(> .{1} > .{2})', this.memberlistStatus, 'subText', this.dmStatus, 'textXs', this.memberStatusText, 'truncated');
+        }
+
+        // Remove User Activity Status
+        if (this.settings.dms.userActivity == 'dmlist') {
+            this.styler.add('[class^="channel_"] div[class^="subText"]:has(> .{0} >span > .{0} > .{1})', this.dmStatus, 'textXs', this.memberStatusText, 'truncated');
+        } else if (this.settings.dms.userActivity == 'memberlist') {
+            this.styler.add('[class^="memberInner"] .{0}:has(.{1} .{1} > .{2})', this.memberlistStatus, 'subText', this.dmStatus, 'textXs', this.memberStatusText, 'truncated');
+        } else if (this.settings.dms.userActivity == 'remove') {
+            // DM List
+            this.styler.add('[class^="channel_"] div[class^="subText"]:has(> .{0} > span > .{0} > .{1})', this.dmStatus, 'textXs', this.memberStatusText, 'truncated');
+            // Member List
+            this.styler.add('[class^="memberInner"] .{0}:has(.{1} .{1} > .{2})', this.memberlistStatus, 'subText', this.dmStatus, 'textXs', this.memberStatusText, 'truncated');
+        }
+
+        // Friend Page
+        if (this.settings.dms.defaultFLStatus) this.styler.add('.{0} .{1}:has(> [class^="text_"])', this.friendInfo, 'userInfo', this.friendInfo, 'subtext');
+        if (this.settings.dms.customFLStatus) {
+            this.styler.add('.{0} .{1}:has(> .{2} > div)', this.friendInfo, 'userInfo', this.friendInfo, 'subtext', this.friendTextSm, 'textSm');
+            this.styler.add('.{0} .{1}:has(> .{2} > span > .{2})', this.friendInfo, 'userInfo', this.friendInfo, 'subtext', this.friendTextSm, 'textSm');
+        }
+
+        if (this.settings.dms.libraryTab) this.styler.add('li:has([href="/library"])');
+        if (this.settings.dms.pinDM) {
+            // DMs
+            this.styler.add('div[role="separator"] + div > div[id$="user-context-pin-dm"]');
+            this.styler.add('div[role="separator"]:has(+ div > div[id$="user-context-pin-dm"])');
+            // GDMs
+            this.styler.add('div[role="separator"] + div > div[id$="gdm-context-pin-dm"]');
+            this.styler.add('div[role="separator"]:has(+ div > div[id$="gdm-context-pin-dm"])');
+        }
+
+        /// Servers and Channels ///
+        if (this.settings.servers.addServerButton) this.styler.add('.{0}', this.addServerDiscoverButton, 'tutorialContainer');
+        if (this.settings.servers.discoverButton) this.styler.add('.{0} + .{1}', this.addServerDiscoverButton, 'tutorialContainer', this.addServerDiscoverButton, 'listItem');
+
+        if (this.settings.servers.unreadIndicator == 'both') {
+            this.styler.add('.{0}, .{1}', this.serverIndicatorTop, 'unreadMentionsIndicatorTop', this.serverIndicatorBottom, 'unreadMentionsIndicatorBottom');
+        } else if (this.settings.servers.unreadIndicator == 'top') {
+            this.styler.add('.{0}', this.serverIndicatorTop, 'unreadMentionsIndicatorTop');
+        } else if (this.settings.servers.unreadIndicator == 'bottom') {
+            this.styler.add('.{0}', this.serverIndicatorBottom, 'unreadMentionsIndicatorBottom');
+        }
+
+        if (this.settings.servers.serverBanner) {
+            this.styler.add('.{0}', this.serverBanner, 'animatedContainer');
+            this.styler.add('div#channels > ul :is(div[style="height: 84px;"], div[style="height: 8px;"], div[style="height: 12px;"])');
+        }
+        if (this.settings.servers.boostBar) this.styler.add('.{0}', this.boostBar, 'container');
+        if (this.settings.servers.stageNotice) this.styler.add('.{0}', this.liveNotice, 'channelNotice');
+        if (this.settings.servers.serverGuide) this.styler.add('#channels li:has(div[id*="home-tab"])');
+        if (this.settings.servers.eventButton) this.styler.add('#channels li:has(svg > path[d^="M7 1a1 1 0 0 1 1 1v.75c0 .14.11.25.25.25h7.5c.14 0"])');
+        if (this.settings.servers.membersButton) this.styler.add('#channels li:has(svg > path[d^="M14.5 8a3 3 0 1 0-2.7-4.3c-.2.4.06.86.44 1.12a5"])');
+        if (this.settings.servers.channelsAndRoles) this.styler.add('#channels li:has(svg > path[d^="M18.5 23c.88 0 1.7-.25 2.4-.69l1.4 1.4a1"])');
+        if (this.settings.servers.boostsButton) this.styler.add('li:has(div[id*="skill-trees"])');
+        if (this.settings.servers.shopButton) this.styler.add('#channels li:has(> div > [data-list-item-id*="shop"])');
+        if (this.settings.servers.inviteButton) {
+            this.styler.add('.{0}', this.headerInviteButton, 'inviteButton');
+            this.styler.add('.{0} > span:has(svg > path[d^="M19 14a1 1 0 0 1 1 1v3h3a1 1 0 0 1"])', this.channelListButtons, 'children');
+        }
+        if (this.settings.servers.showallButton) this.styler.add('.{0}', this.vcShowAllButton, 'refreshVoiceChannelsButton');
+        if (this.settings.servers.settingsButton) this.styler.add('.{0} > span:has(svg > path[d^="M10.56 1.1c-.46.05-.7.53-.64.98.18 1.16-.19 2.2-.98"])', this.channelListButtons, 'children');
+        
+        if (this.settings.servers.pinChannel) {
+            this.styler.add('div[role="separator"] + div > div[id$="channel-context-pin-channel"]');
+        }
+        
+        if (this.settings.servers.unreadMentionsBar) this.styler.add('.{0}', this.channelMentionsBar, 'mentionsBar');
+        if (this.settings.servers.unreadMessagesBar) this.styler.add('.{0}', this.channelMessagesBar, 'unreadBar');
+        if (this.settings.servers.activitySection) {
+            this.styler.add('.{0}:has([role="button"])', this.serverActivitySection, 'membersGroup');
+            this.styler.add('div > div .{0}', this.serverActivitySectionCards, 'usesCardRows');
+            this.styler.add('div > div .{0}.{1}', this.serverActivityOnHover, 'container', this.serverActivityOnHover, 'openOnHover');
+        }
+
+        /// Voice ///
+        if (this.settings.voice.invitePlaceholder) this.styler.add('div[class^="row"] > div:has(.{0})', this.vcScreen, 'singleUserRoot');
+        if (this.settings.voice.cameraPanelButton) this.styler.add('.{0} > button:first-of-type', this.vcButtons, 'actionButtons');
+        if (this.settings.voice.screensharePanelButton) this.styler.add('.{0} > button:nth-of-type(2)', this.vcButtons, 'actionButtons');
+        if (this.settings.voice.activityPanelButton) this.styler.add('.{0} > button:nth-of-type(3)', this.vcButtons, 'actionButtons');
+        if (this.settings.voice.soundboardPanelButton) this.styler.add('.{0} span:has(svg)', this.vcButtons, 'actionButtons');
+        if (this.settings.voice.krispButton) this.styler.add('.{0} button:first-of-type', this.vcKrisp, 'voiceButtonsContainer');
+        if (this.settings.voice.gameActivityPanel) this.styler.add('.{0}', this.vcActivityPanel, 'activityPanel');
+        if (this.settings.voice.gameActivityButton) this.styler.add('.{0}:has(.{1})', this.vcButtonSection, 'buttonContainer', this.vcActivities, 'attachedCaretButtonContainer');
+        if (this.settings.voice.soundboardButton) this.styler.add('.{0} > .{1} + .{2}', this.vcButtonSection, 'buttonSection', this.vcButtonSection, 'buttonContainer', this.vcActivities, 'attachedCaretButtonContainer');
+        if (this.settings.voice.voiceAvatars) this.styler.add('.{0}', this.vcSmallAvatar, 'avatarSmall');
+        if (this.settings.voice.voiceWasHere) this.styler.add('.{0}', this.vcWasHere, 'row');
+        if (this.settings.voice.voiceInviteToVoice) this.styler.add('.{0}:has(>.{1})', this.vcInviteToVoice, 'animation', this.vcInviteToVoice, 'clickable');
+        if (this.settings.voice.voiceSetCustomStatus) this.styler.add('.{0}', this.vcSetCustomStatus, 'linkBottom');
+
+        if (this.settings.voice.vcRTCpingWrap == 'rtcPing') {
+            this.styler.add('.{0}', this.vcRTCWrapper, 'clickablePing');
+        } else if (this.settings.voice.vcRTCpingWrap == 'rtcStatus') {
+            this.styler.add('.{0} > div[role="button"]', this.vcRTCWrapper, 'labelWrapper');
+        } else if (this.settings.voice.vcRTCpingWrap == 'rtcPingStatus') {
+            this.styler.add('.{0}', this.vcRTCWrapper, 'clickablePing');
+            this.styler.add('.{0} > div[role="button"]', this.vcRTCWrapper, 'labelWrapper');
+        }
+
+        /// Title Bar ///
+        if (this.settings.toolbar.navButtons) this.styler.add('.{0}', this.backForwardButtons, 'backForwardButtons');
+        if (this.settings.toolbar.locator) this.styler.add('.{0}', this.titleBarTrailing, 'title');
+        if (this.settings.toolbar.helpButton) this.styler.add(':is(.{0}, .{1}) a[href="https://support.discord.com"]', this.titleBarTrailing, 'trailing', this.upperToolbar, 'toolbar');
+        if (this.settings.toolbar.bookmarkButton) this.styler.add(':is(.{0}, .{1}) div:has(svg > path[d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v16a1 1 0 0 1-1.67.74l-5.66-5.13a1 1 0 0 0-1.34 0l-5.66 5.13A1 1 0 0 1 4 20.99V5Z"])', this.titleBarTrailing, 'trailing', this.upperToolbar, 'toolbar');
+        if (this.settings.toolbar.inboxButton) this.styler.add(':is(.{0}, .{1}) div:has(svg > path[d^="M5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3"])', this.titleBarTrailing, 'trailing', this.upperToolbar, 'toolbar');
+
+        /// Toolbar ///
+        if (this.settings.toolbar.threadsButton) this.styler.add('.{0}:has(svg > path[d^="M12 2.81a1 1 0 0 1 0-1.41l.36-.36a1 1 0 0 1 1.41 0l9.2 9.2a1"]) ', this.upperToolbar, 'iconWrapper');
+        if (this.settings.toolbar.notifyButton) {
+            // Strike Through Bell
+            this.styler.add('.{0}:has(> svg > path[d^="M1.3 21.3a1 1 0 1 0 1.4 1.4l20-20a1"]) ', this.upperToolbar, 'iconWrapper');
+            // Regular Bell
+            this.styler.add('.{0}:has(> svg > path[d^="M9.7 2.89c.18-.07.32-.24.37-.43a2"]) ', this.upperToolbar, 'iconWrapper');
+        }
+        if (this.settings.toolbar.pinnedButton) this.styler.add('.{0}:has(> svg path[d^="M19.38 11.38a3 3 0 0 0 4.24 0l.03-.03a.5.5 0 0 0 0-.7L13.35.35a.5.5"]) ', this.upperToolbar, 'iconWrapper');
+        if (this.settings.toolbar.memberButton) this.styler.add('.{0}:has(> svg > path[d^="M14.5 8a3 3 0 1 0-2.7-4.3c-.2.4.06.86.44 1.12a5"]) ', this.upperToolbar, 'iconWrapper');
+        if (this.settings.toolbar.voiceButton) this.styler.add('.{0}:has(svg > path[d="M13 7a1 1 0 0 1 1-1 4 4 0 0 1 4 4 1 1 0 1 1-2 0 2 2 0 0 0-2-2 1 1 0 0 1-1-1Z"]) ', this.upperToolbar, 'iconWrapper');
+        if (this.settings.toolbar.videoButton) this.styler.add('.{0}:has(> svg > path[d^="M4 4a3 3 0 0 0-3 3v10a3"])', this.upperToolbar, 'iconWrapper');
+        if (this.settings.toolbar.profileButton) this.styler.add('.{0}:has(> svg > path[d^="M23 12.38c-.02.38-.45.58-.78.4a6.97 6.97 0 0 0-6.27-.08.54.54"]) ', this.upperToolbar, 'iconWrapper');
+
+        /// Profile Customizations ///
+        if (this.settings.profileCustomizations.profileNoCustom) {
+            this.styler.patch(
+                `--profile-gradient-primary-color: var(--background-surface-high) !important;
+                --profile-gradient-secondary-color: var(--background-surface-high) !important;
+                --profile-gradient-overlay-color: rgba(0, 0, 0, 0) !important;
+                --profile-gradient-button-color: var(--background-mod-subtle) !important;
+                --profile-gradient-modal-background-color: var(--background-base-lower) !important;
+                --custom-theme-base-color-amount: unset !important;
+                --custom-theme-text-color-amount: unset !important;
+                --custom-theme-base-color-light-hsl: unset !important;
+                --custom-theme-base-color-light: unset !important;
+                --custom-theme-text-color-light: unset !important;
+                --custom-theme-base-color-dark-hsl: unset !important;
+                --custom-theme-base-color-dark: unset !important;
+                --custom-theme-text-color-dark: unset !important;`,
+                '[class*="custom-user-profile-theme"]'
+            );
+        }
+
+        if (this.settings.profileCustomizations.namePlate == 'original') {
+            // Server List / DM List
+            this.styler.add('.{0} > [style^="background: linear-gradient"]', this.dmEntry, 'interactive');
+            this.styler.add('.{0} > [style^="background: linear-gradient"]', this.namePlate, 'nameplated');
+        } else if (this.settings.profileCustomizations.namePlate == 'self') {
+            // Self Avatar Area
+            this.styler.add('.{0}', this.selfNamePlate, 'fitInAccount');
+        } else if (this.settings.profileCustomizations.namePlate == 'global' || this.settings.profileCustomizations.profileDisableAll) {
+            // Server List / DM List
+            this.styler.add('.{0} > [style^="background: linear-gradient"]', this.dmEntry, 'interactive');
+            this.styler.add('.{0} > [style^="background: linear-gradient"]', this.namePlate, 'nameplated');
+            // Self Avatar Area
+            this.styler.add('.{0}', this.selfNamePlate, 'fitInAccount');
+        }
+
+        if (this.settings.profileCustomizations.clanTag == 'memberlist' || this.settings.profileCustomizations.clanTag == 'global' || this.settings.profileCustomizations.profileDisableAll) {
+            // Member List
+            this.styler.add('.{0}', this.mlTagEntry, 'clanTag');
+            // DM List
+            this.styler.add('.{0}', this.dmTagEntry, 'clanTag');
+            // VC Users List
+            this.styler.add('.{0} .{1}', this.vcSmallAvatar, 'userSmall', this.containerChiplet, 'chipletParent');
+        }
+        if (this.settings.profileCustomizations.clanTag == 'profile' || this.settings.profileCustomizations.clanTag == 'global' || this.settings.profileCustomizations.profileDisableAll) {
+            // Chat
+            this.styler.add('.{0}', this.clanTagChiplet, 'clanTagChiplet');
+            // Profile
+            this.styler.add('.{0}', this.clanTagProfile, 'guildTag');
+            // Profile - NewOldProfiles Plugin
+            if (newOldProfiles) this.styler.add('.badgeSection .clanTagContainer, .badgeSection .divider');
+        }
+
+        if (this.settings.profileCustomizations.avatarDecoration || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add(':not(.{0} > div ) > .{1}', this.avatarPreview, 'skuPreview', this.avatarDecorationContainer, 'avatarDecorationContainer');
+            this.styler.add(':not(.{0} > div ) > .{1}', this.avatarPreview, 'skuPreview', this.avatarDecorationChat, 'avatarDecoration');
+        }
+
+        if (this.settings.profileCustomizations.hideBadges || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add('div[class^="container"]:has(> a.{0} > img)', this.profileBadges, 'anchor');
+            // Profile - NewOldProfiles Plugin
+            if (newOldProfiles) this.styler.add('.headerInfo .profileBadges .profileBadgeWrapper:not(:has(.profileBadgeBirthday))');
+        }
+
+        if (this.settings.profileCustomizations.hideBanner || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.patch(
+                `background-image: unset !important;`,
+                '.{0} .{1}',
+                this.profileBanner, 'banner', this.profileBanner, 'fill'
+            );
+        }
+
+        if (this.settings.profileCustomizations.removeCutout) {
+            this.styler.patch(
+                `--custom-cutout-radius: 0px !important;
+                --custom-cutout-x: unset !important;
+                --custom-cutout-y: unset !important;`,
+                '.{0} .{1}',
+                this.profileBanner, 'banner', this.profileBanner, 'fill'
+            );
+        }
+
+        if (this.settings.profileCustomizations.profileEffects || this.settings.profileCustomizations.profileDisableAll) this.styler.add(':not(.{0} > div > div) > .{1}', this.avatarPreview, 'skuPreview', this.profileEffects, 'profileEffects');
+        if (this.settings.profileCustomizations.profileGIF) this.styler.add('.{0}', this.profileGIF, 'gifTag');
+        if (this.settings.profileCustomizations.hideMessage) this.styler.add('[class^="footer"]:has(.{0})', this.textArea, 'channelTextArea');
+        if (this.settings.profileCustomizations.hideEditProfile) {
+            this.styler.add('.user-profile-popout [class^="footer"]:has(button)');
+            // Profile - NewOldProfiles Plugin
+            if (newOldProfiles) this.styler.add('.profileButtons > button:has(svg>path[d="m13.96 5.46 4.58 4.58a1 1 0 0 0 1.42 0l1.38-1.38a2 2 0 0 0 0-2.82l-3.18-3.18a2 2 0 0 0-2.82 0l-1.38 1.38a1 1 0 0 0 0 1.42ZM2.11 20.16l.73-4.22a3 3 0 0 1 .83-1.61l7.87-7.87a1 1 0 0 1 1.42 0l4.58 4.58a1 1 0 0 1 0 1.42l-7.87 7.87a3 3 0 0 1-1.6.83l-4.23.73a1.5 1.5 0 0 1-1.73-1.73Z"])');
+        }
+
+        if (this.settings.profileCustomizations.hideCollection || this.settings.profileCustomizations.profileDisableAll)  this.styler.add('.{0} .{1}', this.profileCards, 'cardsList', this.profileCollection, 'breadcrumb');
+
+        if (this.settings.profileCustomizations.hideProfileActivity == 'hpaPopout') {
+            this.styler.add(':not(.{0}) > .{1} .{2}:has( > article)', this.profileWishBody, 'cards', this.profileCards, 'container', this.profileCards, 'firstCardContainer');
+        }
+        else if (this.settings.profileCustomizations.hideProfileActivity == 'hpaDMs') {
+            this.styler.add('.{0}:has(.{1} > article)', this.profileWishBody, 'cards', this.profileCards, 'firstCardContainer');
+        }
+        else if (this.settings.profileCustomizations.hideProfileActivity == 'hpaGlobal' || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add('.{0}:has(.{1} article)', this.profileCards, 'container', this.profileCards, 'cardsList');
+        }
+
+        if (this.settings.profileCustomizations.hideProfileStats == 'hpsPopout') {
+            this.styler.add(':not(.{0}) > .{1} .{2}:has( > div)', this.profileWishBody, 'cards', this.profileCards, 'container', this.profileCards, 'firstCardContainer');
+        }
+        else if (this.settings.profileCustomizations.hideProfileStats == 'hpsDMs') {
+            this.styler.add('.{0} .{1} > div:has( > .{2})', this.profileWishBody, 'cards', this.profileCards, 'firstCardContainer', this.profileCards, 'card');
+        }
+        else if (this.settings.profileCustomizations.hideProfileStats == 'hpsGlobal' || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add('.{0} .{1} > div:has( > .{2})', this.profileCards, 'container', this.profileCards, 'firstCardContainer', this.profileCards, 'card');
+        }
+
+        if (this.settings.profileCustomizations.hideWishlist || this.settings.profileCustomizations.profileDisableAll) this.styler.add('.{0} .{1}', this.profileWishBody, 'cards', this.profileWishlist, 'container');
+
+        if (this.settings.profileCustomizations.hideStatus == 'hcsPopout' || this.settings.profileCustomizations.hideStatus == 'hcsGlobal' || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add(':not([class^="previewContainer"]) > .user-profile-popout .{0}:has(.{1} > span.{2})', this.profileCustomStatus, 'referenceContainer', this.profileCustomStatus, 'outer', this.profileCustomStatus, 'inner');
+            this.styler.add(':not([class^="previewContainer"]) > .user-profile-popout .{0}:has(.{1} > span.{2})', this.profileCustomStatus, 'container', this.profileCustomStatus, 'outer', this.profileCustomStatus, 'inner');
+        }
+        if (this.settings.profileCustomizations.hideStatus == 'hcsDMs' || this.settings.profileCustomizations.hideStatus == 'hcsGlobal' || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add('.user-profile-sidebar .{0}:has(.{1} > span.{2})', this.profileCustomStatus, 'referenceContainer', this.profileCustomStatus, 'outer', this.profileCustomStatus, 'inner');
+            this.styler.add('.user-profile-sidebar .{0}:has(.{1} > span.{2})', this.profileCustomStatus, 'container', this.profileCustomStatus, 'outer', this.profileCustomStatus, 'inner');
+        }
+
+        if (this.settings.profileCustomizations.frameDecoration || this.settings.profileCustomizations.profileDisableAll) {
+            this.styler.add('.{0} .{1}', this.frameDecoration, 'profileFrameContainer', this.frameDecoration, 'profileFrame');
+            // Patch out the resizing of the Profile to accommodate the Frame
+            this.styler.patch(
+                `--custom-profile-frame-container-width: unset !important;`,
+                '.custom-profile-frame'
+            );
+        }
+
+        if (this.settings.profileCustomizations.hideClips) {
+            this.styler.add('.{0} .{1}:has(svg path[d^="M15.74 5.74a.5.5 0 0 0 .54.7l5.01-.88a.5.5 0 0 0 .4-.58l-.26-1.47a3 3 0 0 0-3.2-2.47.46.46 0 0 0-.37.26l-2.12 4.44ZM15.13"])', this.profileMenu, 'menuOverlay', this.profileMenu, 'menuItem');
+            // Remove the Divider Gap from Status Select
+            this.styler.add('.{0} .{1}:has(+ .{1} svg path[d^="M15.74 5.74a.5.5 0 0 0 .54.7l5.01-.88a.5.5 0 0 0 .4-.58l-.26-1.47a3 3 0 0 0-3.2-2.47.46.46 0 0 0-.37.26l-2.12 4.44ZM15.13"])::after', this.profileMenu, 'menuOverlay', this.profileMenu, 'menuItem');
+        }
+
+        /// Miscellaneous ///
+        if (this.settings.miscellaneous.blockedMessage) this.styler.add('.{0}:has(.{1})', this.blockedGroup, 'groupStart', this.blockedIndicator, 'blockedSystemMessage');
+
+        if (this.settings.miscellaneous.nitroUpsell) {
+            // Settings "Edit Profile" Page
+            this.styler.add('.{0} div:has(> [class^="artContainer"])', this.shopArt, 'settingsPage');
+            // Billing Settings (Context Menu)
+            this.styler.add('.{0} div[role="separator"]:has(+ div > #settings-menu-nitro_sidebar_item)', this.contextSettingsMenu, 'menu');
+            this.styler.add('.{0} div[role="group"]:has(#settings-menu-nitro_sidebar_item)', this.contextSettingsMenu, 'menu');
+            // Upsell in Profiles > Per-Server Profiles (Only should remove if user does not have Nitro)
+            this.styler.add('.{0}', this.profileUpsell, 'upsellOverlayContainer');
+            // Profile Shop Button
+            this.styler.add('[class^="profile"] [class^="profileButtons"] > span:has(svg > path[d^="M2.63 4.19A3 3 0 0 1 5.53 2H7a1 1 0 0"])');
+            // "Add to Favorites" Right Click Menu Option and Separator
+            this.styler.add('div[role="separator"] + div > div[id$="context-favorite-channel"]');
+            this.styler.add('div[role="separator"]:has(+ div > div[id$="context-favorite-channel"])');
+            // Appearance Upsell
+            this.styler.add('div[data-nav-anchor-key="appearance_custom_themes_upsell"]');
+            // Nitro Rewards on Connections Page
+            this.styler.add('div[class^="stack"] div[class^="sectionHeader"]:has(+ div[class^="theme-"][class*="images-"])');
+            this.styler.add('div[class^="stack"] div[class^="theme-"][class*="images-"]');
+            // Profile Popup "Edit Profile" Sidebar
+            this.styler.add('div:has(> .{0}, > .{1})', this.profilePopupUpsell, 'nitro-pink', this.profilePopupUpsell, 'pink');
+        }
+
+        if (this.settings.miscellaneous.noQuests) {
+            this.styler.add('li:has([href="/quest-home"])');
+            // Active Now section
+            this.styler.add('.{0}', this.promotedQuest, 'promotedTag');
+            this.styler.add('.{0}', this.questPrompt, 'wrapper');
+            // MemberList Profile Popout Card Prompt
+            this.styler.add('div[id^="popout"]:has(.{0})', this.mlQuestPrompt, 'wrapper');
+        }
+
+        // Activity Settings (Context Menu)
+        if (this.settings.miscellaneous.noActvityMenu) {
+            this.styler.add('.{0} div[role="separator"]:has(+ div > #settings-menu-activity_privacy_sidebar_item)', this.contextSettingsMenu, 'menu');
+            this.styler.add('.{0} div[role="group"]:has(#settings-menu-activity_privacy_sidebar_item)', this.contextSettingsMenu, 'menu');
+        }
+
+        if (this.settings.miscellaneous.placeholderText) this.styler.add('.{0}:not(.{1}) :has(+ .{2})', this.textArea, 'channelTextArea', this.textArea, 'channelTextAreaDisabled', this.txtPlaceholder, 'slateTextArea');
+        if (this.settings.miscellaneous.avatarPopover) this.styler.add('.{0}', this.profilePopover, 'statusPopover');
+
+        const listSeparatorDm = ['.{0}', this.dmDivider, 'sectionDivider'];
+        const listSeparatorServer = ['.{0}', this.channelDivider, 'sectionDivider'];
+        if (this.settings.miscellaneous.listSeparator == 'dmlist') {
+            this.styler.add(...listSeparatorDm);
+        } else if (this.settings.miscellaneous.listSeparator == 'serverlist') {
+            this.styler.add(...listSeparatorServer);
+        } else if (this.settings.miscellaneous.listSeparator == 'smart') {
+            if (
+                this.settings.dms.friendsTab &&
+                this.settings.dms.premiumTab &&
+                this.settings.dms.discordShopTab &&
+                this.settings.miscellaneous.noQuests
+            ) {
+                this.styler.add(...listSeparatorDm);
+            }
+            if (
+                this.settings.servers.serverGuide &&
+                this.settings.servers.eventButton &&
+                this.settings.servers.membersButton &&
+                this.settings.servers.channelsAndRoles &&
+                this.settings.servers.boostsButton &&
+                this.settings.servers.shopButton
+            ) {
+                this.styler.add(...listSeparatorServer);
+            }
+        } else if (this.settings.miscellaneous.listSeparator == 'remove') {
+            this.styler.add(...listSeparatorDm);
+            this.styler.add(...listSeparatorServer);
+        }
+
+        if (this.settings.miscellaneous.seasonalEvents) {
+            this.styler.add('[href="//discord.com/snowsgiving"], [href="/activities"]');
+            // Checkpoint Button
+            this.styler.add(':is(.{0}, .{1}) div:has(> svg > path[d^="M5.1 1a2.1 2.1 0 0 1 1.8 3.14h14.05c.84"])', this.titleBarTrailing, 'trailing', this.upperToolbar, 'toolbar');
+            // Last Meadow Online
+            this.styler.add(':is(.{0}, .{1}) div:has(> svg > path[fill^="url(#uid_"])', this.titleBarTrailing, 'trailing', this.upperToolbar, 'toolbar');
+        }
+        if (this.settings.miscellaneous.ioChevrons) {
+            this.styler.add('.{0}', this.userAreaIOChevron, 'buttonChevron');
+            // Patch
+            this.styler.patch(
+                `border-end-end-radius: 8px;
+                 border-start-end-radius: 8px;`,
+                '.{0} .{1}',
+                this.userAreaIOChevron, 'audioButtonParent', this.userAreaIOChevron, 'audioButtonWithMenu'
+            );
+        }
+        if (this.settings.miscellaneous.baseGradient) this.styler.add('.{0}', this.textAreaGradient, 'chatGradientBase');
+        if (this.settings.miscellaneous.noTypingDots) this.styler.add('.{0} > svg.{1}', this.typingAnimDots, 'typingDots', this.typingAnimDots, 'ellipsis');
+
+        if (this.settings.miscellaneous.tagsBotApp == 'remove') {
+            this.styler.add('.{0}', this.tagsBot, 'botTag');
+        } else if (this.settings.miscellaneous.tagsBotApp == 'keepOP') {
+            this.styler.add('.{0}:not(.{1})', this.tagsBot, 'botTag', this.tagsBot, 'botTagOP');
+        } else if (this.settings.miscellaneous.tagsBotApp == 'chatOnly') {
+            this.styler.add('[id^="message-username"] > .{0}', this.tagsBot, 'botTag');
+        }
+
+        if (this.settings.miscellaneous.badgeNewUser) this.styler.add('.{0}', this.badgeNew, 'newMemberBadge');
+
+        if (this.settings.miscellaneous.threadSuggestions) this.styler.add('.{0}', this.threadSuggestion, 'threadSuggestionBar');
+
+        /// Compatibility ///
+        if (this.settings.compatibility.invisibleTypingButton) this.styler.add('div:has(> .invisibleTypingButton)');
+
+        this.styler.apply();
+    }
+
+    async start() {
+        this.ensureDefaultSettings();
+
+        [
+            // Chat Bar
+            this.textArea,
+            this.attachButton,
+            this.chatBarButtons,
+            this.emojiButton,
+
+            // Message Actions
+            this.messageActionButtons,
+            this.messageActionContainer,
+
+            // Direct Messages
+            this.DMList,
+            this.DMHeader,
+            this.groupDM,
+            this.activeNowColumn,
+            this.activeNowCards,
+            this.activeNowEmpty,
+            this.dmStatus,
+            this.dmlistStatus,
+            this.dmlistText,
+            this.memberlistStatus,
+            this.memberStatusText,
+            this.multiActivity,
+            this.friendInfo,
+            this.friendTextSm,
+
+            // Servers & Channels
+            this.addServerDiscoverButton,
+            this.serverIndicatorTop,
+            this.serverIndicatorBottom,
+            this.serverSideBar,
+            this.boostBar,
+            this.liveNotice,
+            this.headerInviteButton,
+            this.channelListButtons,
+            this.serverActivitySection,
+            this.serverActivitySectionCards,
+            this.serverActivityOnHover,
+            this.serverBanner,
+            this.vcShowAllButton,
+            this.channelMentionsBar,
+            this.channelMessagesBar,
+
+            // Voice
+            this.vcScreen,
+            this.vcButtons,
+            this.vcKrisp,
+            this.vcActivityPanel,
+            this.vcButtonSection,
+            this.vcActivities,
+            this.vcSmallAvatar,
+            this.vcWasHere,
+            this.vcInviteToVoice,
+            this.vcSetCustomStatus,
+            this.vcRTCWrapper,
+
+            // Title Bar
+            this.backForwardButtons,
+            this.titleBarTrailing,
+            this.upperToolbar,
+
+            // Profile Customizations
+            this.namePlate,
+            this.selfNamePlate,
+            this.dmEntry,
+            this.mlTagEntry,
+            this.dmTagEntry,
+            this.clanTagProfile,
+            this.clanTagChiplet,
+            this.containerChiplet,
+            this.avatarPreview,
+            this.avatarDecorationContainer,
+            this.avatarDecorationChat,
+            this.profileBadges,
+            this.profileBanner,
+            this.profileEffects,
+            this.profileGIF,
+            this.profileCards,
+            this.profileCollection,
+            this.profileWishBody,
+            this.profileWishlist,
+            this.profileCustomStatus,
+            this.frameDecoration,
+            this.profileMenu,
+
+            // Miscellaneous
+            this.blockedGroup,
+            this.blockedIndicator,
+            this.shopArt,
+            this.contextSettingsMenu,
+            this.profileUpsell,
+            this.profilePopupUpsell,
+            this.txtPlaceholder,
+            this.profilePopover,
+            this.promotedQuest,
+            this.questPrompt,
+            this.mlQuestPrompt,
+            this.dmDivider,
+            this.channelDivider,
+            this.userAreaIOChevron,
+            this.textAreaGradient,
+            this.typingAnimDots,
+            this.tagsBot,
+            this.badgeNew,
+            this.threadSuggestion,
+        ] = await this.waitForBulk(
+            // Chat Bar
+            this.api.Webpack.Filters.byKeys('channelTextArea', 'channelTextAreaDisabled'), // Text Input Area
+            this.api.Webpack.Filters.byKeys('attachWrapper'), // Attach Button
+            this.api.Webpack.Filters.byKeys('textArea', 'buttons'), // Buttons Global
+            this.api.Webpack.Filters.byKeys('emojiButtonNormal', 'emojiButton'), // Emoji Button
+
+            // Message Actions
+            this.api.Webpack.Filters.byKeys('hoverBarButton'), // Message Action Buttons
+            this.api.Webpack.Filters.byKeys('messageListItem', 'message', 'buttons'), // Message Action Button
+
+            // Direct Messages
+            this.api.Webpack.Filters.byKeys('privateChannels'), // DM List
+            this.api.Webpack.Filters.byKeys('privateChannelsHeaderContainer'), // DM Header
+            this.api.Webpack.Filters.byKeys('inviteToGroupButton'), // Invite to Group Button
+            this.api.Webpack.Filters.byKeys('nowPlayingColumn'), // Active Now Column
+            this.api.Webpack.Filters.byKeys('activitySection', 'gameSection'), // Active Now Activity Cards
+            this.api.Webpack.Filters.byKeys('emptyCard', 'emptyHeader'), // Active Now Empty Card
+            this.api.Webpack.Filters.byKeys('textXs'), // DMs List Activity/Status Container
+            this.api.Webpack.Filters.byKeys('interactive', 'activityStatusText'), // DMs List Activity/Status Text
+            this.api.Webpack.Filters.byKeys('containerWithoutTruncatedText'), // DMs List Status Text
+            this.api.Webpack.Filters.byKeys('subText', 'childContainer'), // Member List Activity/Status
+            this.api.Webpack.Filters.byKeys('truncated'), // Member List Status Text
+            this.api.Webpack.Filters.byKeys('activityContainer'), // Multi-Activity Status Container
+            this.api.Webpack.Filters.byKeys('userInfo', 'text', 'discordTag'), // Friends Page UserInfo Sub-Status
+            this.api.Webpack.Filters.byKeys('textSm'), // Friends Page UserInfo Sub-Text
+
+            // Servers & Channels
+            this.api.Webpack.Filters.byKeys('tutorialContainer', 'listItem'), // Add Server / Discover Button
+            this.api.Webpack.Filters.byKeys('unreadMentionsIndicatorTop'), // Server Unread Mentions Indicator: Top
+            this.api.Webpack.Filters.byKeys('unreadMentionsIndicatorBottom'), // Server Unread Mentions Indicator: Bottom
+            this.api.Webpack.Filters.byKeys('guilds', 'content'), // Server Sidebar
+            this.api.Webpack.Filters.byKeys('container', 'contentContainer', 'progressContainer'), // Server Boost Bar
+            this.api.Webpack.Filters.byKeys('channelNotice'), // Stage/Live Notice
+            this.api.Webpack.Filters.byKeys('inviteButton'), // Header Invite Button
+            this.api.Webpack.Filters.byKeys('linkTop','children'), // Channel List Invite Button
+            this.api.Webpack.Filters.byKeys('membersGroup'), // Server Activity Section
+            this.api.Webpack.Filters.byKeys('container', 'usesCardRows'), // Server Activity Section Cards
+            this.api.Webpack.Filters.byKeys('container', 'openOnHover'), // Server Activity Section Cards
+            this.api.Webpack.Filters.byKeys('bannerVisible', 'animatedContainer'), // Server Banner
+            this.api.Webpack.Filters.byKeys('refreshVoiceChannelsButton'), // "Show All" Button
+            this.api.Webpack.Filters.byKeys('mentionsBar'), // "Unread Mentions" Bar
+            this.api.Webpack.Filters.byKeys('unreadBar'), // "Unread Messages" Bar
+
+            // Voice
+            this.api.Webpack.Filters.byKeys('singleUserRoot'), // Invite Placeholder
+            this.api.Webpack.Filters.byKeys('wrapper', 'container', 'actionButtons'), // VC Buttons
+            this.api.Webpack.Filters.byKeys('voiceButtonsContainer'), // Krisp Button
+            this.api.Webpack.Filters.byKeys('activityPanel'), // VC Activity Panel
+            this.api.Webpack.Filters.byKeys('buttonSection', 'buttonContainer'),
+            this.api.Webpack.Filters.byKeys('attachedCaretButtonContainer'),
+            this.api.Webpack.Filters.byKeys('userSmall', 'avatarSmall'), // VC Server Channel Avatars
+            this.api.Webpack.Filters.byKeys('row', 'avatarWrapper'), // VC Server Channel Was Here
+            this.api.Webpack.Filters.byKeys('animation', 'clickable'), // VC Server Channel Invite to Voice
+            this.api.Webpack.Filters.byKeys('subtitle', 'linkBottom'), // VC Server Channel Custom Status
+            this.api.Webpack.Filters.byKeys('rtcConnectionStatusWrapper'), // VC Ping/Status Indicator/Wrapper
+
+            // Title Bar
+            this.api.Webpack.Filters.byKeys('backForwardButtons'), // Back/Forward Buttons
+            this.api.Webpack.Filters.byKeys('trailing', 'title'), // Title Buttons
+            this.api.Webpack.Filters.byKeys('upperContainer', 'toolbar', 'iconWrapper'), // Toolbar Buttons
+
+            // Profile Customizations
+            this.api.Webpack.Filters.byKeys('nameplated','container'), // Nameplates
+            this.api.Webpack.Filters.byKeys('container','fitInAccount'), // Nameplates
+            this.api.Webpack.Filters.byKeys('interactive','interactiveSelected'), // DM Entry Item
+            this.api.Webpack.Filters.byKeys('memberInner','clanTag'), // Member List clanTag
+            this.api.Webpack.Filters.byKeys('overflowTooltip','clanTag'), // DM List claTag
+            this.api.Webpack.Filters.byKeys('guildTag', 'clickable'), // Profile Clan Tag
+            this.api.Webpack.Filters.byKeys('clanTagChiplet'), // Clan Tag Chiplet
+            this.api.Webpack.Filters.byKeys('container', 'chipletContainer'), // Clan Tag Chiplet Container
+            this.api.Webpack.Filters.byKeys('skuPreview'), // SKU Preview Exclusion
+            this.api.Webpack.Filters.byKeys('avatar', 'avatarDecorationContainer'), // Avatar Decoration
+            this.api.Webpack.Filters.byKeys('avatarDecoration','contents'), // Avatar Decoration in Chat
+            this.api.Webpack.Filters.byKeys('anchor', 'anchorUnderlineOnHover'), // Profile Badges
+            this.api.Webpack.Filters.byKeys('banner', 'fill'), // Profile Banner
+            this.api.Webpack.Filters.byKeys('profileEffects'), // Profile Effects
+            this.api.Webpack.Filters.byKeys('mask', 'gifTag'), // Profile GIF Tag
+            this.api.Webpack.Filters.byKeys('container', 'cardsList', 'firstCardContainer'), // Profile Cards List
+            this.api.Webpack.Filters.byKeys('breadcrumb'), // Game Collection Breadcrumb
+            this.api.Webpack.Filters.byKeys('body', 'cards'), // Profile Activity/Wishlist Cards
+            this.api.Webpack.Filters.byKeys('container', 'cardsContainer'), // Profile Wishlist
+            this.api.Webpack.Filters.byKeys('referenceContainer', 'container'), // Profile Custom Status
+            this.api.Webpack.Filters.byKeys('profileFrameContainer', 'profileFrame'), // Profile Frame Decoration
+            this.api.Webpack.Filters.byKeys('menuOverlay', 'menuItem'), // Self Profile Menu
+
+            // Miscellaneous
+            this.api.Webpack.Filters.byKeys('groupStart'), // Message Grouping Container
+            this.api.Webpack.Filters.byKeys('blockedSystemMessage'), // Blocked Message Indicator
+            this.api.Webpack.Filters.byKeys('settingsPage'), // Profile Shop Art
+            this.api.Webpack.Filters.byKeys('menu', 'flexible'), // Nitro Context Menu
+            this.api.Webpack.Filters.byKeys('upsellOverlayContainer'), // Per_Server Nitro Upsell
+            this.api.Webpack.Filters.byKeys('nitro-pink', 'pink'), // Profile Popup Nitro Sidebar
+            this.api.Webpack.Filters.byKeys('slateTextArea'), // Placeholder Text
+            this.api.Webpack.Filters.byKeys('statusPopover', 'statusPopover'), // Profile Status Popover
+            this.api.Webpack.Filters.byKeys('promotedTag'), // Active Now Quests Promotion
+            this.api.Webpack.Filters.byKeys('wrapper', 'foreground', 'ctas'), // Active Now Quest Prompt
+            this.api.Webpack.Filters.byKeys('wrapper', 'container', 'top'), // MemberList Profile Popout Card Prompt
+            this.api.Webpack.Filters.byKeys('privateChannels', 'sectionDivider'), // DMs List Divider
+            this.api.Webpack.Filters.byKeys('scroller', 'sectionDivider'), // Server Channel Divider
+            this.api.Webpack.Filters.byKeys('buttonChevron'), // I/O Chevrons
+            this.api.Webpack.Filters.byKeys('chatGradient', 'chatGradientBase'), // Chat Input Gradient
+            this.api.Webpack.Filters.byKeys('typing', 'typingDots'), // Animated Typing Dots
+            this.api.Webpack.Filters.byKeys('botText', 'botTag'), // APP/BOT Tags
+            this.api.Webpack.Filters.byKeys('newMemberBadge'), // New User Badge
+            this.api.Webpack.Filters.byKeys('threadSuggestionBar'), // Thread Suggestions
+        );
+
+        try {
+            this.addStyles();
+        } catch (error) {
+            this.api.Logger.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues:\n\n${error}\n${error.stack}`);
+            BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
+                { type: 'error', timeout: '5000' }
+            );
+        }
+    }
+
+    async waitForBulk(...filters) {
+        return filters.map(filter => this.api.Webpack.waitForModule(filter));
+    }
+
+    stop() {
+        this.styler.purge();
+        this.api.DOM.removeStyle('ChatButtonsBegone-settings-panel');
+    }
+
+    getSettingsPanel() {
+        // Aliases for setting filtering
+        class Aliases {
+            constructor() {
+                this.aliases = [];
+            }
+            /**
+             * Register an alias grouping of similar strings.
+             * @param  {...string} aliasGroup A list of strings to be aliased
+             */
+            register(...aliasGroup) {
+                this.aliases.push(aliasGroup.map(alias => alias.toLowerCase()));
+            }
+            /**
+             * Return a list of aliases related to the provided term.
+             * @param {string} term A search term
+             * @returns {string[]|null} An alias grouping or null if no results are found
+             */
+            getAliases(term) {
+                term = term.toLowerCase();
+                for (const aliasGroup of this.aliases) {
+                    for (const alias of aliasGroup) {
+                        if (alias === term) return aliasGroup;
+                    }
+                };
+                return null;
+            }
+        }
+        
+        // Custom setting styles
+        const styles = `
+            .ChatButtonsBegone-settings-search {
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                margin: 0 0 1rem 0;
+            }
+            #ChatButtonsBegone-settings-panel .bd-settings-group~.bd-settings-group .bd-settings-title {
+                margin-top: 0px !important;
+            }
+        `;
+        this.api.DOM.addStyle('ChatButtonsBegone-settings-panel', styles);
+
+        // Clone default config
+        let settings = JSON.parse(JSON.stringify(config.defaultConfig));
+        settings.forEach((category) => {
+            category.settings.forEach((subSetting) => {
+                subSetting.defaultValue = this.settings[category.id][subSetting.id];
+            });
+        });
+
+        const createSettingsList = (filteredSettings) => {
+            if (filteredSettings.length === 0) {
+                return this.api.React.createElement(this.api.Components.Text,
+                    { id: "ChatButtonsBegone-empty" },
+                    `No results found. Can't find what you're looking for? Want a feature? Let us know at: `,
+                    this.api.React.createElement('a',
+                        {
+                            href: `${config.info.github}/issues`,
+                            target: '_blank',
+                        },
+                        `${config.info.github}/issues`,
+                    ),
+                );
+            }
+
+            return this.api.React.createElement("div",
+                { id: "ChatButtonsBegone-settings-list" },
+                filteredSettings.map((setting) => {
+                    return this.api.React.createElement(this.api.Components.SettingGroup, {
+                        key: `group-${setting.id}-${String(setting.shown)}`,
+                        ...setting,
+                        shown: setting.shown,
+                        onChange: (category, id, value) => {
+                            try {
+                                this.settings[category][id] = value;
+                            } catch {
+                                this.settings[category] = {};
+                                this.settings[category][id] = value;
+                            }
+                            this.api.Data.save('settings', this.settings);
+
+                            // Don't refresh styles on core settings change
+                            if (category === 'core') return;
+
+                            this.styler.purge();
+                            this.addStyles();
+                            this.api.UI.showToast('Styles refreshed.', { type: 'info' });
+                        },
+                    });
+                }),
+            );
+        }
+
+        const SettingsPanel = () => {
+            const aliases = new Aliases();
+            aliases.register("voice", "vc", "vcs", "voice chat", "voice chats", "voice channel", "voice channels");
+            aliases.register("dm", "dms", "direct message", "direct messages");
+            aliases.register("gdm", "gdms", "group direct message", "group direct messages");
+            aliases.register("chatbar", "chat bar", "typing area", "text area");
+            aliases.register("title and toolbar", "title bar", "toolbar", "tool bar");
+            aliases.register("servers and channels", "servers", "channels", "server", "channel");
+            aliases.register("profile", "profile customization", "profile customizations");
+
+            const [filteredSettings, setFilteredSettings] = this.api.React.useState(settings);
+
+            const filterSettings = (searchTerm) => {
+                const term = searchTerm.trim().toLowerCase();
+
+                // If no search term is supplied, show default list
+                if (!term) {
+                    setFilteredSettings(settings);
+                    return;
+                }
+
+                const filteredSettings = JSON.parse(JSON.stringify(settings));
+                filteredSettings.forEach((category) => {
+                    category.settings = category.settings.filter((subSetting) => {
+                        // If the search term starts with an underscore, search by ID instead
+                        if (term.startsWith("_")) {
+                            // Append the ID to the name in ID mode for easier identification
+                            subSetting.name += ` [${subSetting.id}]`;
+                            return (
+                                subSetting.id.toLowerCase().includes(term.slice(1)) ||
+                                category.id.toLowerCase().includes(term.slice(1))
+                            );
+                        }
+
+                        // Filters for the search to use
+                        const filters = (word) => {
+                            return (
+                                // If the name of the setting includes the term
+                                subSetting.name.toLowerCase().includes(word) ||
+                                // If the description of the setting includes the term
+                                subSetting.note.toLowerCase().includes(word) ||
+                                // If the name of the category is equal to the term
+                                category.name.toLowerCase() === word
+                            );
+                        }
+
+                        // If the word has an alias, check all aliases for a match
+                        if (aliases.getAliases(term)) {
+                            for (const alias of aliases.getAliases(term)) {
+                                if (filters(alias)) return true;
+                            }
+                        } else return filters(term); // Otherwise just check the term itself
+                    });
+
+                    // In filter mode, uncollapse all categories that have at least one setting
+                    if (category.settings.length > 0) category.shown = true;
+                });
+                setFilteredSettings(filteredSettings.filter(category => category.settings.length > 0));
+            };
+
+            const numSettings = Object.keys(config.defaultConfig).reduce((acc, category) => acc + config.defaultConfig[category].settings.length, 0);
+            return this.api.React.createElement("div",
+                { id: "ChatButtonsBegone-settings-panel" },
+                this.api.React.createElement(this.api.Components.SearchInput,
+                    {
+                        className: "ChatButtonsBegone-settings-search",
+                        placeholder: `Search ${numSettings} settings...`,
+                        onChange: e => filterSettings(e),
+                    },
+                ),
+                createSettingsList(filteredSettings),
+            );
+        };
+
+        return this.api.React.createElement(SettingsPanel);
+    }
+};
