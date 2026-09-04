@@ -74,25 +74,15 @@
   // NETWORK
   // --------------------
   "network": {
-	  "interval": 1,
-	  "format-wifi": "  {essid}",
-	  "format-ethernet": "󰈀  Wired",
-	  "format-disconnected": "󰖪  Disconnected",
-	  "tooltip-format-wifi": "{ifname}
-	  \nIP: {ipaddr}
-	  \nsignalStr: {signalStrength} %
-	  \nfrequency: {frequency} GHz
-	  \nupSpeed: {bandwidthUpBytes}
-	  \ndownSpeed: {bandwidthDownBytes}
-	  ",
-	  "tooltip-format-ethernet": "
-	  \nfrequency: {frequency} GHz
-	  \nupSpeed: {bandwidthUpBytes}
-	  \ndownSpeed: {bandwidthDownBytes}
-	  ",
+      "interval": 1,
+      "format-wifi": "  {essid}",
+      "format-ethernet": "󰈀  Wired",
+      "format-disconnected": "󰖪  Disconnected",
+      "tooltip-format-wifi": "{ifname}\nIP: {ipaddr}\nsignalStr: {signalStrength} %\nfrequency: {frequency} GHz\nupSpeed: {bandwidthUpBytes}\ndownSpeed: {bandwidthDownBytes}",
+      "tooltip-format-ethernet": "\nfrequency: {frequency} GHz\nupSpeed: {bandwidthUpBytes}\ndownSpeed: {bandwidthDownBytes}",
 
-	//WARN: on click event is set to reconnect wifi
-	"on-click": "nmcli d connect wlan0"
+    //WARN: on click event is set to reconnect wifi
+    "on-click": "nmcli d connect wlan0"
   },
 
   // --------------------
@@ -154,21 +144,18 @@
   // MPRIS (Playing Audio Name)
   // --------------------
   "mpris": {
-
-	  //WARN: on right click, current player stops. Only use when player conflicts
-	  "on-click-right": "playerctl stop",
-
-	  "format": "{status_icon}	{dynamic}",
-	  "dynamic-order": ["artist", "title"],
-	  "tooltip-format": "Current player: {player}",
-	  "status-icons": {
-		  "playing": "⏸",
-		  "paused": "▶"
-	  },
-	  "artist-len": 34,
-	  "title-len": 50
+      //WARN: on right click, current player stops. Only use when player conflicts
+      "on-click-right": "playerctl stop",
+      "format": "{status_icon}    {dynamic}",
+      "dynamic-order": ["artist", "title"],
+      "tooltip-format": "Current player: {player}",
+      "status-icons": {
+          "playing": "⏸",
+          "paused": "▶"
+      },
+      "artist-len": 34,
+      "title-len": 50
   },
-
 
 	"custom/brightness" :{
 		"format": "☼ {text}",
