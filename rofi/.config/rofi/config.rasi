@@ -1,0 +1,20 @@
+configuration {
+	modi:                       "drun,run,window";
+	show-icons:                 true;
+	icon-theme:                 "breeze-dark";
+	display-drun:               "Apps";
+	display-run:                "Run";
+	display-window:             "Window";
+	drun-display-format:        "{icon} {name}";
+	font:                       "AdwaitaSans Nerd Font 11";
+	terminal:                   "kitty";
+	sidebar-mode:                false;
+	hover-select:                true;
+	me-select-entry:            "MousePrimary";
+	me-accept-entry:            "MouseDPrimary";
+	matching:                    "fuzzy";
+	sort:                        true;
+	sorting-method:              "fzf";
+}
+
+@theme "ashen"

@@ -1,0 +1,83 @@
+* {
+	bg:          rgba(30, 30, 30, 0.85);
+	bg-alt:      rgba(60, 60, 60, 0.5);
+	fg:          #e8e8e8;
+	fg-alt:      #cfcfcf;
+	accent:      #E5383B;
+	accent-dim:  rgba(229, 56, 59, 0.18);
+	accent-border: rgba(229, 56, 59, 0.85);
+
+	background-color: transparent;
+	text-color:        @fg;
+}
+
+window {
+	width:            420px;
+	background-color: @bg;
+	border:           2px;
+	border-color:     @accent-border;
+	border-radius:    15px;
+	padding:          12px;
+}
+
+mainbox {
+	background-color: transparent;
+	children: [ inputbar, listview ];
+	spacing: 8px;
+}
+
+inputbar {
+	background-color: @bg-alt;
+	text-color:        @fg;
+	border:            1px;
+	border-color:      rgba(255, 255, 255, 0.08);
+	border-radius:     40px;
+	padding:           8px 14px;
+	children: [ entry ];
+	spacing: 8px;
+}
+
+entry {
+	placeholder:       "Search";
+	placeholder-color: rgba(232, 232, 232, 0.4);
+	text-color:        @fg;
+}
+
+listview {
+	background-color: transparent;
+	lines:             8;
+	columns:           1;
+	spacing:           2px;
+	cycle:             true;
+	dynamic:           true;
+	scrollbar:         false;
+	fixed-height:      false;
+}
+
+element {
+	background-color: transparent;
+	text-color:        @fg-alt;
+	orientation:       horizontal;
+	border-radius:     12px;
+	padding:           6px 10px;
+	spacing:           8px;
+}
+
+element selected {
+	background-color: @accent-dim;
+	text-color:        #ffffff;
+	border:            1px;
+	border-color:      rgba(229, 56, 59, 0.4);
+	border-radius:     12px;
+}
+
+element-icon {
+	size: 27px;
+	horizontal-align: 0.5;
+	vertical-align:   0.5;
+}
+
+element-text {
+	vertical-align: 0.5;
+	text-color: inherit;
+}
