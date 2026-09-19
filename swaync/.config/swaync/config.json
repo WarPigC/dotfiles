@@ -1,14 +1,13 @@
 {
-  // Position & layer  (was: origin = top-right, layer = top)
+  // Position & layer  
   "positionX": "right",
   "positionY": "top",
   "layer": "top",
 
-  // Notification bubble width  (was: width = 380)
+  // Notification bubble width  
   "notification-window-width": 380,
 
-  // Slide-in animation duration in ms  (dunst had none of this — this IS
-  // what gives you the slide you wanted; 0 disables it)
+  // Slide-in animation duration in ms  
   "transition-time": 300,
 
   // Timeouts, per urgency  (was: [urgency_*] timeout = 5)
@@ -19,7 +18,7 @@
   // Removes copy feature for 2FA codes in notifications
   "notification-2fa-action": false,
 
-  // Control center behavior (dunst had no direct equivalent, sane defaults)
+  // Control center behavior 
   "control-center-width": 500,
   "control-center-height": 600,
   "fit-to-screen": false,
@@ -27,7 +26,7 @@
   "hide-on-action": true,
   "keyboard-shortcuts": true,
 
-  // Mute rule  (was: [ignore_app_notifications] appname = "Antigravity IDE", skip_display = true)
+  // Mute rule  
   "notification-visibility": {
     "antigravity-ide": {
       "state": "muted",
