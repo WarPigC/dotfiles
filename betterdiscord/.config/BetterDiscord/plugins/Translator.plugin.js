@@ -2,7 +2,7 @@
  * @name Translator
  * @author DevilBro
  * @authorId 278543574059057154
- * @version 2.8.3
+ * @version 2.8.6
  * @description Allows you to translate incoming and your outgoing Messages within Discord
  * @invite Jx3TjNS
  * @donate https://www.paypal.me/MircoWittrien
@@ -472,9 +472,12 @@ module.exports = (_ => {
 							label: translated ? this.labels.context_messageuntranslateoption : this.labels.context_messagetranslateoption,
 							disabled: isTranslating,
 							id: BDFDB.ContextMenuUtils.createItemId(this.name, translated ? "untranslate-message" : "translate-message"),
-							icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {
-								icon: translated ? translateIconUntranslate : translateIcon
-							}),
+							leadingAccessory: {
+								type: "icon",
+								icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {
+									icon: translated ? translateIconUntranslate : translateIcon
+								})
+							},
 							action: _ => this.translateMessage(e.instance.props.message, e.instance.props.channel)
 						}));
 					}
@@ -816,9 +819,12 @@ module.exports = (_ => {
 						icon: hint && (_ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuHint, {
 							hint: hint
 						})),
-						icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {
-							icon: translated ? translateIconUntranslate : translateIcon
-						}),
+						leadingAccessory: {
+							type: "icon",
+							icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {
+								icon: translated ? translateIconUntranslate : translateIcon
+							})
+						},
 						disabled: !translated && isTranslating,
 						action: _ => this.translateMessage(e.instance.props.message, e.instance.props.channel)
 					}));
@@ -838,9 +844,12 @@ module.exports = (_ => {
 					children.splice(index > -1 ? index + 1 : 0, 0, BDFDB.ContextMenuUtils.createItem(BDFDB.LibraryComponents.MenuItems.MenuGroup, {
 						children: BDFDB.ContextMenuUtils.createItem(BDFDB.LibraryComponents.MenuItems.MenuItem, {
 							id: BDFDB.ContextMenuUtils.createItemId(this.name, "search-translation"),
-							icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {
-								icon: translateIcon
-							}),
+							leadingAccessory: {
+								type: "icon",
+								icon: _ => BDFDB.ReactUtils.createElement(BDFDB.LibraryComponents.MenuItems.MenuIcon, {
+									icon: translateIcon
+								})
+							},
 							disabled: isTranslating,
 							label: this.labels.context_translator,
 							persisting: true,
@@ -1339,19 +1348,19 @@ module.exports = (_ => {
 						"q": encodeURIComponent(data.text)
 					}
 				}, (error, response, body) => {
-					if (!error && body && response.statusCode == 200) {
+					if (!error && body && response && response.statusCode == 200) {
 						try {
 							body = JSON.parse(body);
 							if (!data.specialCase && body.src && body.src && languages[body.src]) {
 								data.input.name = languages[body.src].name;
 								data.input.ownlang = languages[body.src].ownlang;
 							}
-							callback(body.sentences.map(n => n && n.trans).filter(n => n).join(""));
+							callback(body.sentences.map(n => n && n.trans).filter(n => n).join("").replace(/\?client\=gtx/g, ""));
 						}
 						catch (err) {callback("");}
 					}
 					else {
-						if (response.statusCode == 429) BDFDB.NotificationUtils.toast(`${this.labels.toast_translating_failed}. ${this.labels.toast_translating_tryanother}. ${this.labels.error_hourlylimit}`, {
+						if (response && response.statusCode == 429) BDFDB.NotificationUtils.toast(`${this.labels.toast_translating_failed}. ${this.labels.toast_translating_tryanother}. ${this.labels.error_hourlylimit}`, {
 							type: "danger",
 							position: "center"
 						});

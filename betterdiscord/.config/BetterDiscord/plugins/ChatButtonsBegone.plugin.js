@@ -2,7 +2,7 @@
  * @name ChatButtonsBegone
  * @author LancersBucket
  * @description Remove annoying stuff from your Discord client.
- * @version 4.5.3
+ * @version 4.5.4
  * @authorId 355477882082033664
  * @website https://github.com/LancersBucket/ChatButtonsBegone
  * @source https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/main/ChatButtonsBegone.plugin.js
@@ -101,7 +101,7 @@ class Styler {
 const config = {
     info: {
         github: 'https://github.com/LancersBucket/ChatButtonsBegone',
-        version: '4.5.3',
+        version: '4.5.4',
     },
     defaultConfig: [
         {
@@ -1325,7 +1325,7 @@ module.exports = class ChatButtonsBegone {
         if (this.settings.voice.cameraPanelButton) this.styler.add('.{0} > button:first-of-type', this.vcButtons, 'actionButtons');
         if (this.settings.voice.screensharePanelButton) this.styler.add('.{0} > button:nth-of-type(2)', this.vcButtons, 'actionButtons');
         if (this.settings.voice.activityPanelButton) this.styler.add('.{0} > button:nth-of-type(3)', this.vcButtons, 'actionButtons');
-        if (this.settings.voice.soundboardPanelButton) this.styler.add('.{0} span:has(svg)', this.vcButtons, 'actionButtons');
+        if (this.settings.voice.soundboardPanelButton) this.styler.add('.{0} div:has(> button svg)', this.vcButtons, 'actionButtons');
         if (this.settings.voice.krispButton) this.styler.add('.{0} button:first-of-type', this.vcKrisp, 'voiceButtonsContainer');
         if (this.settings.voice.gameActivityPanel) this.styler.add('.{0}', this.vcActivityPanel, 'activityPanel');
         if (this.settings.voice.gameActivityButton) this.styler.add('.{0}:has(.{1})', this.vcButtonSection, 'buttonContainer', this.vcActivities, 'attachedCaretButtonContainer');
@@ -1407,12 +1407,16 @@ module.exports = class ChatButtonsBegone {
             this.styler.add('.{0}', this.dmTagEntry, 'clanTag');
             // VC Users List
             this.styler.add('.{0} .{1}', this.vcSmallAvatar, 'userSmall', this.containerChiplet, 'chipletParent');
+            // Friends List
+            this.styler.add('.{0}.{1}', this.clanTagFriendsList, 'chipletContainerInner', this.clanTagFriendsList, 'noTooltip');
         }
         if (this.settings.profileCustomizations.clanTag == 'profile' || this.settings.profileCustomizations.clanTag == 'global' || this.settings.profileCustomizations.profileDisableAll) {
             // Chat
             this.styler.add('.{0}', this.clanTagChiplet, 'clanTagChiplet');
             // Profile
             this.styler.add('.{0}', this.clanTagProfile, 'guildTag');
+            // DM's "Show Profile"
+            this.styler.add('.{0}', this.clanTagProfile, 'guildTagPill');
             // Profile - NewOldProfiles Plugin
             if (newOldProfiles) this.styler.add('.badgeSection .clanTagContainer, .badgeSection .divider');
         }
@@ -1512,6 +1516,8 @@ module.exports = class ChatButtonsBegone {
             // Billing Settings (Context Menu)
             this.styler.add('.{0} div[role="separator"]:has(+ div > #settings-menu-nitro_sidebar_item)', this.contextSettingsMenu, 'menu');
             this.styler.add('.{0} div[role="group"]:has(#settings-menu-nitro_sidebar_item)', this.contextSettingsMenu, 'menu');
+            // Billing Settings (Context Menu / BetterSettings Plugin)
+            this.styler.add('.{0} div:has(> #settings-menu-Billing)', this.contextSettingsMenu, 'menu');
             // Upsell in Profiles > Per-Server Profiles (Only should remove if user does not have Nitro)
             this.styler.add('.{0}', this.profileUpsell, 'upsellOverlayContainer');
             // Profile Shop Button
@@ -1688,6 +1694,7 @@ module.exports = class ChatButtonsBegone {
             this.clanTagProfile,
             this.clanTagChiplet,
             this.containerChiplet,
+            this.clanTagFriendsList,
             this.avatarPreview,
             this.avatarDecorationContainer,
             this.avatarDecorationChat,
@@ -1794,6 +1801,7 @@ module.exports = class ChatButtonsBegone {
             this.api.Webpack.Filters.byKeys('guildTag', 'clickable'), // Profile Clan Tag
             this.api.Webpack.Filters.byKeys('clanTagChiplet'), // Clan Tag Chiplet
             this.api.Webpack.Filters.byKeys('container', 'chipletContainer'), // Clan Tag Chiplet Container
+            this.api.Webpack.Filters.byKeys('chipletContainerInner', 'noTooltip'), // Friends List Clan Tag
             this.api.Webpack.Filters.byKeys('skuPreview'), // SKU Preview Exclusion
             this.api.Webpack.Filters.byKeys('avatar', 'avatarDecorationContainer'), // Avatar Decoration
             this.api.Webpack.Filters.byKeys('avatarDecoration','contents'), // Avatar Decoration in Chat

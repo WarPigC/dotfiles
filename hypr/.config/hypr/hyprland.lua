@@ -37,6 +37,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprsunset")
     hl.exec_cmd("hyprctl setcursor BreezeX-RosePine-Linux 24")
     hl.exec_cmd("batteryForIdle.sh")
+	ht.exec_cmd("swaync")
 
     -- sync keyring for PAM
     hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")

@@ -50,8 +50,9 @@
 			"PeoplesNowPlayingMember": "942813",
 			"PictureInPicture": "155819",
 			"Scroller": "6095",
+			"Select": "980148",
 			"SettingsItems": "715965",
-			"Slider": "192204",
+			"Slider": "9761",
 			"Spinner": "244875",
 			"Spoiler": "881013",
 			"Table": false,
@@ -77,15 +78,15 @@
 			"UnreadDMs": "24594"
 		},
 		"changeLogs": {
-			"BDFDB": "4.5.6",
+			"BDFDB": "4.5.7",
 			"BetterSearchPage": "1.2.3",
 			"ImageUtilities": "5.6.7",
 			"NotificationSounds": "4.0.2",
 			"ReadAllNotificationsButton": "1.8.5",
 			"ServerCounter": "1.1.1",
-			"SpellCheck": "1.7.3",
+			"SpellCheck": "1.7.4",
 			"SplitLargeMessages": "1.8.7",
-			"Translator": "2.8.3"
+			"Translator": "2.8.6"
 		},
 		"choices": {
 			"toastPosition": "right"
@@ -98,7 +99,7 @@
 			"useChromium": false
 		},
 		"hashes": {
-			"0BDFDB.data.json": "046bfe4f9dac9927852c94e49d33aeeb2038f3d5",
+			"0BDFDB.data.json": "3695e3896ab2ace86e1f96ef2a7aa4208f7e1964",
 			"0BDFDB.raw.css": "09d4361abbf6390a119b6d7fd069912fb115d966"
 		}
 	}

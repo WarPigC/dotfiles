@@ -1,0 +1,99 @@
+/* Converted from dunstrc visual settings.
+   swaync has no [urgency_*] sections in config.json — all color/shape/
+   spacing settings live here as CSS instead. */
+
+* {
+  /* was: font = FreeSans 11 */
+  font-family: "FreeSans";
+  font-size: 11pt;
+}
+
+/* Overall notification bubble.
+   was: padding, frame_width, corner_radius, transparency */
+.notification-row {
+  padding: 0;
+}
+
+.notification-background {
+  padding: 10px;               /* was: padding = 10 */
+  border: 0px solid transparent; /* was: frame_width = 0 */
+  border-radius: 16px;          /* was: corner_radius = 16 */
+}
+
+/* was: horizontal_padding = 14 */
+.notification-content {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+/* was: gap_size = 10 (space between stacked notifications) */
+.notification-row {
+  margin-bottom: 10px;
+}
+
+/* was: text_icon_padding = 12, icon_position = left */
+.notification-content .image {
+  margin-right: 12px;
+}
+
+/* was: min_icon_size = 48, max_icon_size = 64, icon_corner_radius = 10 */
+.notification-content .image {
+  min-width: 48px;
+  min-height: 48px;
+  max-width: 64px;
+  max-height: 64px;
+  border-radius: 10px;
+}
+
+/* Summary/body text weight mimics dunst's
+   format = "<b>%s</b>\n%b" (bold summary, plain body below — this is
+   swaync's default layout already, styled here for clarity) */
+.notification-content .summary {
+  font-weight: bold;
+}
+.notification-content .body {
+  font-weight: normal;
+}
+
+/* --- Urgency colors ---
+   NOTE: swaync's internal widget hierarchy has changed across versions,
+   so background-color is applied on multiple possible selectors here to
+   cover different swaync builds. Once you confirm which one actually
+   matches (via GTK_DEBUG=interactive swaync), you can safely delete the
+   two that don't apply. */
+
+/* was: [urgency_low] background = #3c3c3ccc, foreground = #cdd6f4 */
+.notification.low,
+.notification.low .notification-background,
+.notification-background.low {
+  background-color: #3c3c3ccc;
+}
+.notification.low .summary,
+.notification.low .body,
+.notification.low .time {
+  color: #cdd6f4;
+}
+
+/* was: [urgency_normal] background = #3c3c3ccc, foreground = #ffffff */
+.notification.normal,
+.notification.normal .notification-background,
+.notification-background.normal {
+  background-color: #3c3c3ccc;
+}
+.notification.normal .summary,
+.notification.normal .body,
+.notification.normal .time {
+  color: #ffffff;
+}
+
+/* was: [urgency_critical] background = #f38ba8cc, foreground = #11111b */
+.notification.critical,
+.notification.critical .notification-background,
+.notification-background.critical {
+  background-color: #f38ba8cc;
+}
+.notification.critical .summary,
+.notification.critical .body,
+.notification.critical .time {
+  color: #11111b;
+}
