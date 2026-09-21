@@ -4,7 +4,7 @@
     "BetterFormattingRedux": true,
     "BetterVolume": true,
     "DoNotTrack": true,
-    "ImageUtilities": true,
+    "ImageUtilities": false,
     "InvisibleTyping": true,
     "ServerCounter": true,
     "SocialMediaLinkConverter": true,

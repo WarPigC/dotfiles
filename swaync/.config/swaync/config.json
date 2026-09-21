@@ -10,7 +10,7 @@
   // Slide-in animation duration in ms  
   "transition-time": 300,
 
-  // Timeouts, per urgency  (was: [urgency_*] timeout = 5)
+  // Timeouts, per urgency  
   "timeout": 5,
   "timeout-low": 5,
   "timeout-critical": 5,

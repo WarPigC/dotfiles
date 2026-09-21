@@ -1,43 +1,40 @@
-/* Converted from dunstrc visual settings.
-   swaync has no [urgency_*] sections in config.json — all color/shape/
-   spacing settings live here as CSS instead. */
-
+/* Global Typography */
 * {
-  /* was: font = FreeSans 11 */
   font-family: "FreeSans";
   font-size: 11pt;
 }
 
-/* Overall notification bubble.
-   was: padding, frame_width, corner_radius, transparency */
+/* 
+ * SPACING FIX: 
+ * .notification controls gaps for floating popups on your screen.
+ * .notification-row controls gaps inside the control center panel. 
+ */
+.notification {
+  margin-top: 10px; 
+}
+
 .notification-row {
+  outline: none;
   padding: 0;
+  margin-bottom: 10px; 
 }
 
+/* Overall notification bubble */
 .notification-background {
-  padding: 10px;               /* was: padding = 10 */
-  border: 0px solid transparent; /* was: frame_width = 0 */
-  border-radius: 16px;          /* was: corner_radius = 16 */
+  padding: 10px;
+  border: 0px solid transparent;
+  border-radius: 16px;
 }
 
-/* was: horizontal_padding = 14 */
+/* Content layout */
 .notification-content {
   padding-left: 14px;
   padding-right: 14px;
 }
 
-/* was: gap_size = 10 (space between stacked notifications) */
-.notification-row {
-  margin-bottom: 10px;
-}
-
-/* was: text_icon_padding = 12, icon_position = left */
+/* Icon constraints */
 .notification-content .image {
   margin-right: 12px;
-}
-
-/* was: min_icon_size = 48, max_icon_size = 64, icon_corner_radius = 10 */
-.notification-content .image {
   min-width: 48px;
   min-height: 48px;
   max-width: 64px;
@@ -45,24 +42,18 @@
   border-radius: 10px;
 }
 
-/* Summary/body text weight mimics dunst's
-   format = "<b>%s</b>\n%b" (bold summary, plain body below — this is
-   swaync's default layout already, styled here for clarity) */
+/* Text formatting */
 .notification-content .summary {
   font-weight: bold;
 }
+
 .notification-content .body {
   font-weight: normal;
 }
 
-/* --- Urgency colors ---
-   NOTE: swaync's internal widget hierarchy has changed across versions,
-   so background-color is applied on multiple possible selectors here to
-   cover different swaync builds. Once you confirm which one actually
-   matches (via GTK_DEBUG=interactive swaync), you can safely delete the
-   two that don't apply. */
+/* --- Urgency colors (Restored to original selectors to fix the pink color) --- */
 
-/* was: [urgency_low] background = #3c3c3ccc, foreground = #cdd6f4 */
+/* Low */
 .notification.low,
 .notification.low .notification-background,
 .notification-background.low {
@@ -74,7 +65,7 @@
   color: #cdd6f4;
 }
 
-/* was: [urgency_normal] background = #3c3c3ccc, foreground = #ffffff */
+/* Normal */
 .notification.normal,
 .notification.normal .notification-background,
 .notification-background.normal {
@@ -86,7 +77,7 @@
   color: #ffffff;
 }
 
-/* was: [urgency_critical] background = #f38ba8cc, foreground = #11111b */
+/* Critical */
 .notification.critical,
 .notification.critical .notification-background,
 .notification-background.critical {
@@ -97,3 +88,10 @@
 .notification.critical .time {
   color: #11111b;
 }
+
+
+/* push top notification down */
+.floating-notifications {
+  padding-top: 30px; 
+}
+
