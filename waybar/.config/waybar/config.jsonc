@@ -35,10 +35,10 @@
   ],
 
   "custom/gpu": {
-	  "format": "{text} C°",
-	  "interval": 10,
-	  "exec": "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader",
-	  "tooltip-format": "Nvidia RTX 3050 Temperature",
+	  "format": "{text}",
+	  "interval": 2,
+	  "exec": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader",
+	  "tooltip-format": "GPU Util",
   },
 
   // --------------------
