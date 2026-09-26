@@ -107,7 +107,8 @@
             "hideWishlist": false,
             "hideStatus": "show",
             "frameDecoration": false,
-            "hideClips": false
+            "hideClips": false,
+            "hideBadgesStatusMenu": false
         },
         "miscellaneous": {
             "blockedMessage": false,
@@ -130,5 +131,5 @@
             "newOldProfiles": false
         }
     },
-    "settingVersion": "4.5.4"
+    "settingVersion": "5.0.0"
 }
