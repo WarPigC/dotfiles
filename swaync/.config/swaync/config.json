@@ -3,7 +3,7 @@
   "positionY": "top",
   "layer": "top",
 
-  "notification-window-width": 380,
+  "notification-window-width": 500,
 
   "transition-time": 300,
 
@@ -14,7 +14,7 @@
   "notification-2fa-action": false,
 
   "control-center-width": 500,
-  "control-center-height": 600,
+  "control-center-height": 500,
   "fit-to-screen": false,
   "hide-on-clear": false,
   "hide-on-action": true,

@@ -9,6 +9,9 @@ vim.opt.termguicolors = true
 vim.opt.shiftwidth = 4
 vim.opt.relativenumber = true
 vim.opt.tabstop = 4
+vim.opt.expandtab = true
+vim.opt.softtabstop = 4
+vim.opt.cinoptions = "l1,:1"
 
 vim.opt.smarttab = true
 vim.opt.autoindent = true
