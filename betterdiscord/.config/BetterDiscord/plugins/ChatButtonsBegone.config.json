@@ -124,12 +124,13 @@
             "noTypingDots": false,
             "tagsBotApp": "show",
             "badgeNewUser": false,
-            "threadSuggestions": false
+            "threadSuggestions": false,
+            "badgeBoosting": false
         },
         "compatibility": {
             "invisibleTypingButton": false,
             "newOldProfiles": false
         }
     },
-    "settingVersion": "5.0.0"
+    "settingVersion": "5.0.1"
 }

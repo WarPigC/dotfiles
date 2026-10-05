@@ -27,24 +27,19 @@
 			"GuildsWrapper": "987566",
 			"HoverCard": false,
 			"ImageAssets": "193833",
-			"ImageModalMediaWrapper": "827045",
 			"ImageWrapper": "774702",
 			"Input": "151167",
 			"ItemLayerContainer": "38112",
 			"Layers": "913420",
 			"Margins": "221851",
 			"Menu": "798819",
-			"Message": "13673",
 			"MessageAttachment": "645970",
-			"MessageBody": "318626",
 			"MessageElements": "959760",
 			"MessageReactions": "356974",
-			"MessageToolbarExtras": "798743",
 			"MessageToolbarItems": "738745",
 			"MessagesPopoutTabBar": "113164",
 			"MessagesWrap": "33176",
 			"Modal": "268814",
-			"ModalCarouselNav": "418450",
 			"ModalNew": "592551",
 			"ModalSub": "978843",
 			"NameTag": "646810",
@@ -59,7 +54,6 @@
 			"Spinner": "244875",
 			"Spoiler": "881013",
 			"Table": false,
-			"Text": "607226",
 			"Text2": "990089",
 			"TitleBar": "964837",
 			"Tooltip": "233680",
@@ -78,13 +72,8 @@
 			"EmojiPickerListRow": "267889",
 			"LazyImage": "619517",
 			"Menu": "980707",
-			"MessageAccessories": "230797",
-			"MessageButtons": "105165",
-			"MessageContent": "438729",
-			"MessageReply": "105165",
-			"Messages": "105165",
 			"Spoiler": "302031",
-			"UnreadDMs": "24594"
+			"UnreadDMs": "112943"
 		},
 		"changeLogs": {
 			"BDFDB": "4.5.7",
@@ -108,8 +97,8 @@
 			"useChromium": false
 		},
 		"hashes": {
-			"0BDFDB.data.json": "3695e3896ab2ace86e1f96ef2a7aa4208f7e1964",
-			"0BDFDB.raw.css": "09d4361abbf6390a119b6d7fd069912fb115d966"
+			"0BDFDB.data.json": "abf4f6ceeb265f24f5d3e70520a65a9148c40b06",
+			"0BDFDB.raw.css": "1410ee461b2c28dcd8775dc6d32e575a93e84c04"
 		}
 	}
 }
