@@ -1,9 +1,8 @@
 /**
  * @name ChatButtonsBegone
- * @author LancersBucket
+ * @author TheLastBucket, Zacam
  * @description Remove annoying stuff from your Discord client.
- * @version 5.0.1
- * @authorId 355477882082033664
+ * @version 5.0.2
  * @website https://github.com/LancersBucket/ChatButtonsBegone
  * @source https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -103,7 +102,7 @@ const config = {
     info: {
         github: 'https://github.com/LancersBucket/ChatButtonsBegone',
         changelog_url: 'https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/main/CHANGELOG.md',
-        version: '5.0.1',
+        version: '5.0.2',
     },
     defaultConfig: [
         {
@@ -1110,8 +1109,14 @@ const config = {
                     ],
                     getRules: (v, s, m) => {
                         if (v === 'hpsPopout') return [ { selector: ':not(.{0}) > .{1} .{2}:has( > div)', mods: [ m.profileWishBody, 'cards', m.profileCards, 'container', m.profileCards, 'firstCardContainer' ] } ];
-                        else if (v === 'hpsDMs') return [ { selector: '.{0} .{1} > div:has( > .{2})', mods: [ m.profileWishBody, 'cards', m.profileCards, 'firstCardContainer', m.profileCards, 'card' ] } ];
-                        else if (v === 'hpsGlobal' || s.profileCustomizations.profileDisableAll) return [ { selector: '.{0} .{1} > div:has( > .{2})', mods: [ m.profileCards, 'container', m.profileCards, 'firstCardContainer', m.profileCards, 'card' ] } ];
+                        else if (v === 'hpsDMs') return [
+                            { selector: '.{0} .{1} > div:has( > .{2})', mods: [ m.profileWishBody, 'cards', m.profileCards, 'firstCardContainer', m.profileCards, 'card' ] },
+                            { selector: '.{0}', mods: [ m.profileCards, 'backgroundCardContainer' ] },
+                        ];
+                        else if (v === 'hpsGlobal' || s.profileCustomizations.profileDisableAll) return [
+                            { selector: '.{0} .{1} > div:has( > .{2})', mods: [ m.profileCards, 'container', m.profileCards, 'firstCardContainer', m.profileCards, 'card' ] },
+                            { selector: '.{0}', mods: [ m.profileCards, 'backgroundCardContainer' ] },
+                        ];
                     },
                 },
                 {
@@ -1192,6 +1197,19 @@ const config = {
                         ];
                     },
                 },
+                {
+                    type: 'switch',
+                    id: 'hideOrbsProfileMenu',
+                    name: 'Remove "Orbs" from Status Menu',
+                    note: 'Removes the "Orbs" option from Profile Status menu.',
+                    getRules: (v, s, m) => {
+                        if (v) return [
+                        { selector: '.{0} .{1}:has(svg path[d^="M11.64.22c.3-.12.62-.12.91 0l7.49 3.1c.29.12.52.35.64.64l3.1 7.49c.12.29.12.62 0"])', mods: [ m.profileMenu, 'menuOverlay', m.profileMenu, 'menuItem' ] },
+                        // Remove the Divider Gap from Status Select
+                        { selector: '.{0} .{1}:has(+ .{1} svg path[d^="M11.64.22c.3-.12.62-.12.91 0l7.49 3.1c.29.12.52.35.64.64l3.1 7.49c.12.29.12.62 0"])::after', mods: [ m.profileMenu, 'menuOverlay', m.profileMenu, 'menuItem' ] },
+                        ];
+                    },
+                },
             ],
         },
         {
@@ -1235,7 +1253,7 @@ const config = {
                         { selector: 'div[class^="stack"] div[class^="sectionHeader"]:has(+ div[class^="theme-"][class*="images-"])' },
                         { selector: 'div[class^="stack"] div[class^="theme-"][class*="images-"]' },
                         // Profile Popup "Edit Profile" Sidebar
-                        { selector: 'div:has(> .{0}, > .{1})', mods: [ m.profilePopupUpsell, 'nitro-pink', m.profilePopupUpsell, 'pink' ] },
+                        { selector: '.{0}, .{0} + div', mods: [ m.profilePopupUpsell, 'premiumTryItOutSection' ] },
                         ];
                     },
                 },
@@ -1396,6 +1414,13 @@ const config = {
                     name: 'Remove Boosting Server Badge',
                     note: 'Removes the Boosting Server badge from Memberlist area.',
                     getRules: (v, s, m) => { if (v) return [ { selector: 'span:has(.{0})', mods: [ m.mlTagEntry, 'premiumIcon' ] } ]; },
+                },
+                {
+                    type: 'switch',
+                    id: 'superReact',
+                    name: 'Remove "Add Super Reaction" Button',
+                    note: 'Removes the "Add Super Reaction" button from React popup.',
+                    getRules: (v, s, m) => { if (v) return [ { selector: '.{0}', mods: [ m.superReaction, 'burstReactionTooltipPrompt' ] } ]; },
                 },
             ],
         },
@@ -1720,7 +1745,7 @@ module.exports = class ChatButtonsBegone {
                 { name: 'shopArt', filter: this.api.Webpack.Filters.byKeys('settingsPage') }, // Profile Shop Art
                 { name: 'contextSettingsMenu', filter: this.api.Webpack.Filters.byKeys('menu', 'flexible') }, // Nitro Context Menu
                 { name: 'profileUpsell', filter: this.api.Webpack.Filters.byKeys('upsellOverlayContainer') }, // Per-Server Nitro Upsell
-                { name: 'profilePopupUpsell', filter: this.api.Webpack.Filters.byKeys('nitro-pink', 'pink') }, // Profile Popup Nitro Sidebar
+                { name: 'profilePopupUpsell', filter: this.api.Webpack.Filters.byKeys('premiumTryItOutSection', 'premiumTryItOutDivider') }, // Profile Popup Nitro Sidebar
                 { name: 'txtPlaceholder', filter: this.api.Webpack.Filters.byKeys('slateTextArea') }, // Placeholder Text
                 { name: 'profilePopover', filter: this.api.Webpack.Filters.byKeys('statusPopover', 'statusPopover') }, // Profile Status Popover
                 { name: 'promotedQuest', filter: this.api.Webpack.Filters.byKeys('promotedTag') }, // Active Now Quests Promotion
@@ -1734,6 +1759,7 @@ module.exports = class ChatButtonsBegone {
                 { name: 'tagsBot', filter: this.api.Webpack.Filters.byKeys('botText', 'botTag') }, // APP/BOT Tags
                 { name: 'badgeNew', filter: this.api.Webpack.Filters.byKeys('newMemberBadge') }, // New User Badge
                 { name: 'threadSuggestion', filter: this.api.Webpack.Filters.byKeys('threadSuggestionBar') }, // Thread Suggestions
+                { name: 'superReaction', filter: this.api.Webpack.Filters.byKeys('reactionTooltip', 'burstReactionTooltipPrompt') }, // Super Reactions
             )
         }
 
@@ -1741,7 +1767,7 @@ module.exports = class ChatButtonsBegone {
             this.addStyles();
         } catch (error) {
             this.api.Logger.error(`Failed to apply styles. Please report the following error to ${config.info.github}/issues:\n\n${error}\n${error.stack}`);
-            BdApi.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
+            this.api.UI.showToast('ChatButtonsBegone encountered an error! Check the console for more information.',
                 { type: 'error', timeout: '5000' }
             );
         }

@@ -125,7 +125,7 @@
     "InvisibleTyping:3910938": "855522",
     "InvisibleTyping:13608456": "729666",
     "BetterVolume:3658286011": "73153",
-    "BetterVolume:3658256288": "25578",
+    "BetterVolume:3658256288": "192820",
     "BetterVolume:3658286112": "827343",
     "BetterVolume:3658509182": "792251",
     "BetterVolume:3658286379": "862482",
@@ -227,7 +227,7 @@
     "SendStickersAsLinks:4766992": "148355",
     "SendStickersAsLinks:14446": "194004",
     "SendStickersAsLinks:14996": "297264",
-    "SendStickersAsLinks:15088": "299163",
+    "SendStickersAsLinks:15088": "205513",
     "SendStickersAsLinks:15274": "193249",
     "LazyLoadChannels:7304": "265690",
     "LazyLoadChannels:7438": "499867",
@@ -277,7 +277,7 @@
     "FavoriteMedia:6116": "731325",
     "FavoriteMedia:6172": "151271",
     "FavoriteMedia:6205": "355622",
-    "FavoriteMedia:6501": "479909",
+    "FavoriteMedia:6501": "845207",
     "FavoriteMedia:6638": "576705",
     "FavoriteMedia:6678": "652215",
     "FavoriteMedia:6700": "608299",
@@ -296,6 +296,9 @@
     "InvisibleTyping:9309": "17928",
     "InvisibleTyping:11963": "767089",
     "InvisibleTyping:2869927": "855522",
-    "InvisibleTyping:15308217": "123583",
-    "core-ChannelActions": "730852"
+    "InvisibleTyping:15308217": "795541",
+    "core-ChannelActions": "730852",
+    "bd-core-modal-TransitionGroup": "868285",
+    "0BDFDB:1619701282": "287809",
+    "core-react-focus-rings": "559106"
 }

@@ -108,7 +108,8 @@
             "hideStatus": "show",
             "frameDecoration": false,
             "hideClips": false,
-            "hideBadgesStatusMenu": false
+            "hideBadgesStatusMenu": false,
+            "hideOrbsProfileMenu": false
         },
         "miscellaneous": {
             "blockedMessage": false,
@@ -125,12 +126,13 @@
             "tagsBotApp": "show",
             "badgeNewUser": false,
             "threadSuggestions": false,
-            "badgeBoosting": false
+            "badgeBoosting": false,
+            "superReact": false
         },
         "compatibility": {
             "invisibleTypingButton": false,
             "newOldProfiles": false
         }
     },
-    "settingVersion": "5.0.1"
+    "settingVersion": "5.0.2"
 }

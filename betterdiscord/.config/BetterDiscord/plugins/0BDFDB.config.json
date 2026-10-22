@@ -34,6 +34,7 @@
 			"Margins": "221851",
 			"Menu": "798819",
 			"MessageAttachment": "645970",
+			"MessageBody": "318626",
 			"MessageElements": "959760",
 			"MessageReactions": "356974",
 			"MessageToolbarItems": "738745",
@@ -50,7 +51,7 @@
 			"Scroller": "6095",
 			"Select": "980148",
 			"SettingsItems": "715965",
-			"Slider": "9761",
+			"Slider": "303707",
 			"Spinner": "244875",
 			"Spoiler": "881013",
 			"Table": false,
@@ -65,25 +66,25 @@
 			"UserTheme": "52020"
 		},
 		"ModuleIdCache": {
-			"ChannelTextAreaButtons": "123583",
+			"ChannelTextAreaButtons": "795541",
 			"ChannelTextAreaEditor": "392553",
 			"DiscordTag": "297413",
 			"Embed": "175671",
-			"EmojiPickerListRow": "267889",
+			"EmojiPickerListRow": "90295",
 			"LazyImage": "619517",
 			"Menu": "980707",
 			"Spoiler": "302031",
-			"UnreadDMs": "112943"
+			"UnreadDMs": "242816"
 		},
 		"changeLogs": {
-			"BDFDB": "4.5.7",
+			"BDFDB": "4.5.8",
 			"BetterSearchPage": "1.2.3",
 			"ImageUtilities": "5.6.7",
 			"NotificationSounds": "4.0.2",
 			"ReadAllNotificationsButton": "1.8.5",
 			"ServerCounter": "1.1.1",
 			"SpellCheck": "1.7.4",
-			"SplitLargeMessages": "1.8.7",
+			"SplitLargeMessages": "1.8.8",
 			"Translator": "2.8.6"
 		},
 		"choices": {
@@ -97,8 +98,8 @@
 			"useChromium": false
 		},
 		"hashes": {
-			"0BDFDB.data.json": "abf4f6ceeb265f24f5d3e70520a65a9148c40b06",
-			"0BDFDB.raw.css": "1410ee461b2c28dcd8775dc6d32e575a93e84c04"
+			"0BDFDB.data.json": "6435e07e2001961f19581a8cf5613e171ce5e382",
+			"0BDFDB.raw.css": "b4bc90405cbf0cf08a5dd049c7dc2bc705ef2079"
 		}
 	}
 }
