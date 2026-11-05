@@ -86,7 +86,8 @@
             "memberButton": false,
             "voiceButton": false,
             "videoButton": false,
-            "profileButton": false
+            "profileButton": false,
+            "showFriendsList": false
         },
         "profileCustomizations": {
             "profileNoCustom": false,
@@ -101,10 +102,10 @@
             "profileGIF": false,
             "hideMessage": false,
             "hideEditProfile": false,
-            "hideCollection": false,
+            "hideCollection": "show",
             "hideProfileActivity": "show",
             "hideProfileStats": "show",
-            "hideWishlist": false,
+            "hideWishlist": "show",
             "hideStatus": "show",
             "frameDecoration": false,
             "hideClips": false,
@@ -134,5 +135,5 @@
             "newOldProfiles": false
         }
     },
-    "settingVersion": "5.0.2"
+    "settingVersion": "5.0.4"
 }

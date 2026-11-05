@@ -66,24 +66,24 @@
 			"UserTheme": "52020"
 		},
 		"ModuleIdCache": {
-			"ChannelTextAreaButtons": "795541",
-			"ChannelTextAreaEditor": "392553",
+			"ChannelTextAreaButtons": "736092",
+			"ChannelTextAreaEditor": "919327",
 			"DiscordTag": "297413",
-			"Embed": "175671",
-			"EmojiPickerListRow": "90295",
+			"Embed": "161573",
+			"EmojiPickerListRow": "969602",
 			"LazyImage": "619517",
 			"Menu": "980707",
 			"Spoiler": "302031",
-			"UnreadDMs": "242816"
+			"UnreadDMs": "649781"
 		},
 		"changeLogs": {
 			"BDFDB": "4.5.8",
 			"BetterSearchPage": "1.2.3",
-			"ImageUtilities": "5.6.7",
+			"ImageUtilities": "5.6.9",
 			"NotificationSounds": "4.0.2",
 			"ReadAllNotificationsButton": "1.8.5",
 			"ServerCounter": "1.1.1",
-			"SpellCheck": "1.7.4",
+			"SpellCheck": "1.7.5",
 			"SplitLargeMessages": "1.8.8",
 			"Translator": "2.8.6"
 		},
@@ -98,7 +98,7 @@
 			"useChromium": false
 		},
 		"hashes": {
-			"0BDFDB.data.json": "6435e07e2001961f19581a8cf5613e171ce5e382",
+			"0BDFDB.data.json": "adf6d3dc75fb34a74b73d38e5cbc3afa2ba13616",
 			"0BDFDB.raw.css": "b4bc90405cbf0cf08a5dd049c7dc2bc705ef2079"
 		}
 	}

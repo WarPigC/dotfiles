@@ -2,7 +2,7 @@
  * @name ChatButtonsBegone
  * @author TheLastBucket, Zacam
  * @description Remove annoying stuff from your Discord client.
- * @version 5.0.2
+ * @version 5.0.4
  * @website https://github.com/LancersBucket/ChatButtonsBegone
  * @source https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/main/ChatButtonsBegone.plugin.js
  */
@@ -102,7 +102,7 @@ const config = {
     info: {
         github: 'https://github.com/LancersBucket/ChatButtonsBegone',
         changelog_url: 'https://raw.githubusercontent.com/LancersBucket/ChatButtonsBegone/refs/heads/main/CHANGELOG.md',
-        version: '5.0.2',
+        version: '5.0.4',
     },
     defaultConfig: [
         {
@@ -772,10 +772,10 @@ const config = {
                 },
                 {
                     type: 'switch',
-                    id: 'bookmarkButton',
-                    name: 'Remove Bookmarks Button',
-                    note: 'Removes the Bookmarks button (added by experiment 2026-03-message-bookmarks variant 2)',
-                    getRules: (v, s, m) => { if (v) return [ { selector: ':is(.{0}, .{1}) div:has(svg > path[d="M4 5a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v16a1 1 0 0 1-1.67.74l-5.66-5.13a1 1 0 0 0-1.34 0l-5.66 5.13A1 1 0 0 1 4 20.99V5Z"])', mods: [ m.titleBarTrailing, 'trailing', m.upperToolbar, 'toolbar' ] } ]; },
+                    id: 'showFriendsList',
+                    name: 'Remove "Show Friends List" Button',
+                    note: 'Removes the "Show Friends List" button.',
+                    getRules: (v, s, m) => { if (v) return [ { selector: '.{0} > div[role="button"]:has(svg > path[d^="M3 5v-.75C3 3.56 3.56 3 4.25 3s1.24.56 1.33"])', mods: [ m.titleBarTrailing, 'trailing' ] } ]; },
                 },
                 {
                     type: 'switch',
@@ -1071,11 +1071,22 @@ const config = {
                     },
                 },
                 {
-                    type: 'switch',
+                    type: 'dropdown',
                     id: 'hideCollection',
-                    name: 'Remove Profile Collection (+)',
+                    name: 'Profile Collection (+)',
                     note: 'Removes the Game Collection from user profiles.',
-                    getRules: (v, s, m) => { if (v || s.profileCustomizations.profileDisableAll) return [ { selector: '.{0} .{1}', mods: [ m.profileCards, 'cardsList', m.profileCollection, 'breadcrumb' ] } ]; },
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Popout Profile', value: 'hpcPopout' },
+                        { label: 'Remove in DMs View Profile', value: 'hpcDMs' },
+                        { label: 'Remove', value: 'hpcGlobal' },
+                    ],
+                    getRules: (v, s, m) => {
+                        if (v === 'hpcPopout') return [ { selector: '.user-profile-popout .{0} .{1}', mods: [ m.profileCards, 'cardsList', m.profileCollection, 'breadcrumb' ] } ];
+                        else if (v === 'hpcDMs') return [ { selector: '.user-profile-sidebar .{0} .{1}', mods: [ m.profileCards, 'cardsList', m.profileCollection, 'breadcrumb' ] } ];
+                        else if (v === 'hpcGlobal' || s.profileCustomizations.profileDisableAll) return [ { selector: '.{0} .{1}', mods: [ m.profileCards, 'cardsList', m.profileCollection, 'breadcrumb' ] } ];
+                    },
                 },
                 {
                     type: 'dropdown',
@@ -1108,23 +1119,38 @@ const config = {
                         { label: 'Remove', value: 'hpsGlobal' },
                     ],
                     getRules: (v, s, m) => {
-                        if (v === 'hpsPopout') return [ { selector: ':not(.{0}) > .{1} .{2}:has( > div)', mods: [ m.profileWishBody, 'cards', m.profileCards, 'container', m.profileCards, 'firstCardContainer' ] } ];
+                        if (v === 'hpsPopout') return [ { selector: '.user-profile-popout .{0} .{1} > div:has(> .{2} > .{3})', mods: [ m.profileCards, 'container', m.profileCards, 'firstCardContainer', m.profileCards, 'card', m.profileStats, 'root' ] } ];
                         else if (v === 'hpsDMs') return [
-                            { selector: '.{0} .{1} > div:has( > .{2})', mods: [ m.profileWishBody, 'cards', m.profileCards, 'firstCardContainer', m.profileCards, 'card' ] },
-                            { selector: '.{0}', mods: [ m.profileCards, 'backgroundCardContainer' ] },
+                            { selector: '.user-profile-sidebar .{0} .{1} > div:has( > .{2} > .{3})', mods: [ m.profileWishBody, 'cards', m.profileCards, 'firstCardContainer', m.profileCards, 'card', m.profileStats, 'root' ] },
+                            { selector: '.user-profile-sidebar .{0}', mods: [ m.profileCards, 'backgroundCardContainer' ] },
                         ];
                         else if (v === 'hpsGlobal' || s.profileCustomizations.profileDisableAll) return [
-                            { selector: '.{0} .{1} > div:has( > .{2})', mods: [ m.profileCards, 'container', m.profileCards, 'firstCardContainer', m.profileCards, 'card' ] },
+                            { selector: '.{0} .{1} > div:has( > .{2} > .{3})', mods: [ m.profileCards, 'container', m.profileCards, 'firstCardContainer', m.profileCards, 'card', m.profileStats, 'root' ] },
                             { selector: '.{0}', mods: [ m.profileCards, 'backgroundCardContainer' ] },
                         ];
                     },
                 },
                 {
-                    type: 'switch',
+                    type: 'dropdown',
                     id: 'hideWishlist',
-                    name: 'Remove Profile Wishlist (+)',
+                    name: 'Profile Wishlist (+)',
                     note: 'Removes the Wishlist from user profiles.',
-                    getRules: (v, s, m) => { if (v || s.profileCustomizations.profileDisableAll) return [ { selector: '.{0} .{1}', mods: [ m.profileWishBody, 'cards', m.profileWishlist, 'container' ] } ]; },
+                    defaultValue: 'show',
+                    options: [
+                        { label: 'Show', value: 'show' },
+                        { label: 'Remove in Popout Profile', value: 'hpwPopout' },
+                        { label: 'Remove in DMs View Profile', value: 'hpwDMs' },
+                        { label: 'Remove', value: 'hpwGlobal' },
+                    ],
+                    getRules: (v, s, m) => {
+                        if (v === 'hpwPopout') return [ { selector: '.user-profile-popout .{0} .{1}', mods: [ m.profileWishBody, 'cards', m.profileWishlist, 'container' ] } ];
+                        else if (v === 'hpwDMs') return [
+                            { selector: '.user-profile-sidebar .{0} .{1}', mods: [ m.profileWishBody, 'cards', m.profileWishlist, 'container' ] },
+                        ];
+                        else if (v === 'hpwGlobal' || s.profileCustomizations.profileDisableAll) return [
+                            { selector: '.{0} .{1}', mods: [ m.profileWishBody, 'cards', m.profileWishlist, 'container' ] },
+                        ];
+                    },
                 },
                 {
                     type: 'dropdown',
@@ -1233,6 +1259,8 @@ const config = {
                     note: 'Removes Nitro advertising thoughout various parts of Discord. Note: May not remove all of them.',
                     getRules: (v, s, m) => {
                         if (v) return [
+                        // Share Nitro 
+                        { selector: '.{0}', mods: [ m.nitroPink, 'container' ] },
                         // Settings "Edit Profile" Page
                         { selector: '.{0} div:has(> [class^="artContainer"])', mods: [ m.shopArt, 'settingsPage' ] },
                         // Billing Settings (Context Menu)
@@ -1243,7 +1271,7 @@ const config = {
                         // Upsell in Profiles > Per-Server Profiles (Only should remove if user does not have Nitro)
                         { selector: '.{0}', mods: [ m.profileUpsell, 'upsellOverlayContainer' ] },
                         // Profile Shop Button
-                        { selector: 'div[class^="profile"] [class^="profileButtons"] > span:has(svg > path[d^="M2.63 4.19A3A3 0 0 1 5.53 2H7a1 1 0 0"])' },
+                        { selector: 'div[class^="profile"] [class^="profileButtons"] > span:has(svg > path[d^="M2.63 4.19A3 3 0 0 1 5.53 2H7a1"])' },
                         // "Add to Favorites" Right Click Menu Option and Separator
                         { selector: 'div[role="separator"] + div > div[id$="context-favorite-channel"]' },
                         { selector: 'div[role="separator"]:has(+ div > div[id$="context-favorite-channel"])' },
@@ -1254,6 +1282,26 @@ const config = {
                         { selector: 'div[class^="stack"] div[class^="theme-"][class*="images-"]' },
                         // Profile Popup "Edit Profile" Sidebar
                         { selector: '.{0}, .{0} + div', mods: [ m.profilePopupUpsell, 'premiumTryItOutSection' ] },
+                        // Profile Popup "Edit Server Profile" Sidebar (removes fully)
+                        { selector: 'aside#user-profile-editing-panel:has(.{0})', mods: [ m.profilePopupUpsell, 'guildProfileUpsell' ] },
+                        // Fix ESP removal offset
+                        {
+                            type: 'patch',
+                            selector: '.{0}:has(.{1})',
+                            content:
+                            `grid-template-columns: 0px 1fr !important;`,
+                            mods: [ m.perServerEditProfile, 'editingPanelEnabled', m.profilePopupUpsell, 'guildProfileUpsell'],
+                        },
+                        // Fix ESP remove non-rounded corner
+                        {
+                            type: 'patch',
+                            selector: 'aside#user-profile-editing-panel:has(.{1}) + .{0}',
+                            content:
+                            `border-top-left-radius: 16px !important;
+                            border-bottom-left-radius: 16px !important;
+                            border-left: 1px solid rgba(255, 255, 255, 0.10) !important;`,
+                            mods: [ m.perServerEditProfile, 'profileContentOuter', m.profilePopupUpsell, 'guildProfileUpsell' ],
+                        }
                         ];
                     },
                 },
@@ -1562,17 +1610,49 @@ module.exports = class ChatButtonsBegone {
     }
 
     migrateConfig() {
-        const migrations = [];
+        const migrations = [
+            {
+                to: "5.0.4",
+                migrate: (config) => {
+                    if (config.profileCustomizations.hideWishlist === true) {
+                        config.profileCustomizations.hideWishlist = "hpwGlobal"
+                    } else {
+                        config.profileCustomizations.hideWishlist = "show"
+                    }
+
+                    if (config.profileCustomizations.hideCollection === true) {
+                        config.profileCustomizations.hideCollection = "hpcGlobal"
+                    } else {
+                        config.profileCustomizations.hideCollection = "show"
+                    }
+
+                    return config;
+                }
+            }
+        ];
 
         let currentVersion = this.settingVersion;
         let migrated = false;
+        let abortFlag = false;
         migrations.forEach((migration) => {
             if (this.compareVersions(currentVersion, migration.to) < 0) {
-                this.settings = migration.migrate(this.settings);
+                let migratedSettings = migration.migrate(this.settings);
+
+                if (migratedSettings === undefined) {
+                    this.api.UI.showToast('ChatButtonsBegone invalid migration. Check logs.', { type: 'error', timeout: '10000' })
+                    this.api.Logger.error(`Migration from ${currentVersion} to ${migration.to} failed! Returned config is undefined. Did you include 'return config;'?\nAborting migration.`)
+                    abortFlag = true;
+                    return;
+                }
+                this.settings = migratedSettings;
+
                 currentVersion = migration.to;
                 migrated = true;
             }
         });
+
+        if (abortFlag) return;
+
         if (migrated) this.api.Data.save('settings', this.settings);
 
         if (this.compareVersions(this.settingVersion, config.info.version) <= 0) {
@@ -1732,7 +1812,8 @@ module.exports = class ChatButtonsBegone {
                 { name: 'profileEffects', filter: this.api.Webpack.Filters.byKeys('profileEffects') }, // Profile Effects
                 { name: 'profileGIF', filter: this.api.Webpack.Filters.byKeys('mask', 'gifTag') }, // Profile GIF Tag
                 { name: 'profileCards', filter: this.api.Webpack.Filters.byKeys('container', 'cardsList', 'firstCardContainer') }, // Profile Cards List
-                { name: 'profileCollection', filter: this.api.Webpack.Filters.byKeys('breadcrumb') }, // Game Collection Breadcrumb
+                { name: 'profileCollection', filter: this.api.Webpack.Filters.byKeys('breadcrumb', 'innerContainer') }, // Game Collection Breadcrumb
+                { name: 'profileStats', filter: this.api.Webpack.Filters.byKeys('root', 'body', 'content') }, // Profile Stats Elements
                 { name: 'profileWishBody', filter: this.api.Webpack.Filters.byKeys('body', 'cards') }, // Profile Activity/Wishlist Cards
                 { name: 'profileWishlist', filter: this.api.Webpack.Filters.byKeys('container', 'cardsContainer') }, // Profile Wishlist
                 { name: 'profileCustomStatus', filter: this.api.Webpack.Filters.byKeys('referenceContainer', 'container') }, // Profile Custom Status
@@ -1742,6 +1823,7 @@ module.exports = class ChatButtonsBegone {
                 // Miscellaneous
                 { name: 'blockedGroup', filter: this.api.Webpack.Filters.byKeys('groupStart') }, // Message Grouping Container
                 { name: 'blockedIndicator', filter: this.api.Webpack.Filters.byKeys('blockedSystemMessage') }, // Blocked Message Indicator
+                { name: 'nitroPink', filter: this.api.Webpack.Filters.byKeys('container', 'nitro-pink') }, // Share Nitro
                 { name: 'shopArt', filter: this.api.Webpack.Filters.byKeys('settingsPage') }, // Profile Shop Art
                 { name: 'contextSettingsMenu', filter: this.api.Webpack.Filters.byKeys('menu', 'flexible') }, // Nitro Context Menu
                 { name: 'profileUpsell', filter: this.api.Webpack.Filters.byKeys('upsellOverlayContainer') }, // Per-Server Nitro Upsell
@@ -1760,6 +1842,7 @@ module.exports = class ChatButtonsBegone {
                 { name: 'badgeNew', filter: this.api.Webpack.Filters.byKeys('newMemberBadge') }, // New User Badge
                 { name: 'threadSuggestion', filter: this.api.Webpack.Filters.byKeys('threadSuggestionBar') }, // Thread Suggestions
                 { name: 'superReaction', filter: this.api.Webpack.Filters.byKeys('reactionTooltip', 'burstReactionTooltipPrompt') }, // Super Reactions
+                { name: 'perServerEditProfile', filter: this.api.Webpack.Filters.byKeys('editingPanelEnabled', 'editingPanelExpanded') }, // Per-Server Edit Profile Popup (sidebar)
             )
         }
 

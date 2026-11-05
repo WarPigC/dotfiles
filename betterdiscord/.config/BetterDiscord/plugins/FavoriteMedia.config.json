@@ -2926,13 +2926,6 @@
                 "message": "https://discord.com/channels/795499856374267924/795499856374267924/1554891265374683147"
             },
             {
-                "url": "https://cdn.discordapp.com/attachments/795499856374267924/1559557517913231410/RDT_20261013_1828306601252346861727643.jpg?ex=6acf829f&is=6ace311f&hm=12ecbcdc05991cd6588179c577a8a609bcc570f26e17ad5b0dd600e053ea0d37&",
-                "width": 1080,
-                "height": 703,
-                "name": "RDT_20261013_1828306601252346861727643",
-                "message": "https://discord.com/channels/795499856374267924/795499856374267924/1559557518290583692"
-            },
-            {
                 "url": "https://cdn.discordapp.com/attachments/795499856374267924/1559548457033670667/bark.citos_4006718704175276820_67657526787_6c2b5fba.webp?ex=6acf7a2f&is=6ace28af&hm=6c621f1fb9dc8f02042a35246d1364c6d68f8513beb6542bf4969efffa924358",
                 "width": 1080,
                 "height": 1080,
@@ -2966,6 +2959,20 @@
                 "height": 382,
                 "name": "image",
                 "message": "https://discord.com/channels/795499856374267924/795499856374267924/1560017364467187732"
+            },
+            {
+                "url": "https://cdn.discordapp.com/attachments/795499856374267924/1565052513693077664/image.png?ex=6ae6cbfc&is=6ae57a7c&hm=51116de8ac13ec29928e09617c6421afa87e1502d1456413b37f71a7d1779f03&",
+                "width": 241,
+                "height": 182,
+                "name": "image",
+                "message": "https://discord.com/channels/795499856374267924/795499856374267924/1565052514015907922"
+            },
+            {
+                "url": "https://cdn.discordapp.com/attachments/795499856374267924/1566804679373889606/image.png?ex=6ae9e011&is=6ae88e91&hm=57bdf5f231cb83053e523211168e4d68174da4637782abc8750e7fba40f868b6&",
+                "width": 369,
+                "height": 368,
+                "name": "image",
+                "message": "https://discord.com/channels/795499856374267924/795499856374267924/1566804679738921022"
             }
         ],
         "categories": []
@@ -8006,13 +8013,6 @@
                 "name": "gifs"
             },
             {
-                "url": "https://klipy.com/gifs/happiness-in-a-kettle-1",
-                "src": "https://static.klipy.com/ii/e7539ef2aad336edaa067c28ee130b3c/9a/fb/GIgQ1MkFZY40HruWfGpt.webp",
-                "width": 498,
-                "height": 498,
-                "name": "gifs"
-            },
-            {
                 "url": "https://klipy.com/gifs/hell-hell-result",
                 "src": "https://images-ext-1.discordapp.net/external/yfIxYCkFbFdpIxlXN0tImD1ML2Zk49blfvHKw0hN2tc/https/static.klipy.com/ii/4493325008d34b7bf8cd6813cd5c1619/3a/9d/OocqXEZqnh0JVk3.webp?animated=true",
                 "width": 282,
@@ -8158,6 +8158,48 @@
                 "width": 426,
                 "height": 240,
                 "name": "trump-faithful-sheriff"
+            },
+            {
+                "url": "https://klipy.com/gifs/black-man-rizz-black-beard-man-rizz",
+                "src": "https://images-ext-1.discordapp.net/external/C0GXVxcB0QPrK4ZiN4QcL0F9lac0o3XaaLPfEfm5D94/https/static.klipy.com/ii/4493325008d34b7bf8cd6813cd5c1619/42/0b/bUUb4ok9u6RP0gpLR.webp?animated=true",
+                "width": 282,
+                "height": 498,
+                "name": "gifs"
+            },
+            {
+                "url": "https://klipy.com/gifs/dr-who-lightning",
+                "src": "https://static.klipy.com/ii/4493325008d34b7bf8cd6813cd5c1619/81/0f/hFXyN5KcN2L1LXXQZe.webp",
+                "width": 220,
+                "height": 124,
+                "name": "gifs"
+            },
+            {
+                "url": "https://klipy.com/gifs/tex-avery-wolf-awooga-cartoon-awooga",
+                "src": "https://static.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/65/2e/Xile6yxFJqXJkuUqO4.webp",
+                "width": 640,
+                "height": 466,
+                "name": "gifs"
+            },
+            {
+                "url": "https://klipy.com/gifs/bleach-inoue-orihime-1",
+                "src": "https://static.klipy.com/ii/a15b48460c436e1e92c85ffc680932cc/90/0a/EdhaAAgq.webp",
+                "width": 220,
+                "height": 165,
+                "name": "gifs"
+            },
+            {
+                "url": "https://klipy.com/gifs/melon-cat-6",
+                "src": "https://static.klipy.com/ii/e1b92bb53e0c9e442408bc677a56c789/d4/81/HUPIxoDkJwgaP.webp",
+                "width": 240,
+                "height": 240,
+                "name": "gifs"
+            },
+            {
+                "url": "https://klipy.com/gifs/nervous-glorp-glorp-cat",
+                "src": "https://images-ext-1.discordapp.net/external/HKxRZ9APUp4_d_Wt1WIpog6uDIHvXjmMG1MuXyoi-Qc/https/static.klipy.com/ii/925f17378dd1893b674a723c07535afe/29/65/4a2q8ww7.webp?animated=true",
+                "width": 220,
+                "height": 220,
+                "name": "gifs"
             }
         ],
         "categories": []
@@ -8776,5 +8818,5 @@
             "alwaysUploadFile": false
         }
     },
-    "version": "1.13.37"
+    "version": "1.13.39"
 }
